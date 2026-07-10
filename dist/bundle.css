@@ -6345,6 +6345,7 @@ body.theme-light .sr5v2:not(.theme-dark) .list-item img[src*="/icons/"][src$=".s
   display: block;
   outline: 0;
   -webkit-user-select: text;
+  -moz-user-select: text;
   user-select: text;
   cursor: text;
   margin: -2px;
@@ -6514,6 +6515,7 @@ body.theme-light .sr5v2:not(.theme-dark) .list-item img[src*="/icons/"][src$=".s
   margin: 5px;
   padding: var(--tag-pad);
   line-height: normal;
+  min-width: -moz-fit-content;
   min-width: fit-content;
   min-height: 1.5lh;
   position: relative;

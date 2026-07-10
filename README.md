@@ -1,8 +1,9 @@
 # Shadowrun5e for Foundry Virtual Tabletop
-[Installations-Manifest dieses Spiegels](https://raw.githubusercontent.com/TimRoesler/shadowrun5e/main/system.json)
+[Installations-Manifest](https://raw.githubusercontent.com/TimRoesler/shadowrun5e/main/system.json)
 
-Dieses Repository spiegelt das Release 0.36.1 des offiziellen
-[SR5-FoundryVTT-Projekts](https://github.com/SR5-FoundryVTT/SR5-FoundryVTT).
+Dieser V14-Spiegel basiert auf dem aktuellen Quellstand des offiziellen
+[SR5-FoundryVTT-Projekts](https://github.com/SR5-FoundryVTT/SR5-FoundryVTT)
+und enthält zusätzliche Typkorrekturen sowie ein für Foundry 14.364 verifiziertes Manifest.
 Urheber- und Lizenzangaben des Originalprojekts bleiben unverändert erhalten.
 
 [Manifest](https://raw.githubusercontent.com/SR5-FoundryVTT/SR5-FoundryVTT/master/system.json)
