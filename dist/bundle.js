@@ -45023,40 +45023,45 @@ var BulkImporter = class _BulkImporter extends BaseClass4 {
 };
 
 // src/module/apps/ChangelogApplication.ts
-var Application = foundry.appv1.api.Application;
-var ChangelogApplication = class _ChangelogApplication extends Application {
+var ApplicationV29 = foundry.applications.api.ApplicationV2;
+var HandlebarsApplicationMixin10 = foundry.applications.api.HandlebarsApplicationMixin;
+var ChangelogApplication = class extends HandlebarsApplicationMixin10(ApplicationV29) {
   static {
     __name(this, "ChangelogApplication");
   }
-  get template() {
-    return "systems/shadowrun5e/dist/templates/apps/changelog.hbs";
+  static PARTS = {
+    main: {
+      template: "systems/shadowrun5e/dist/templates/apps/changelog.hbs"
+    }
+  };
+  static DEFAULT_OPTIONS = {
+    id: "shadowrun5e-changelog",
+    classes: [SR5_APPV2_CSS_CLASS, "shadowrun5e"],
+    position: {
+      width: 500,
+      height: "auto"
+    },
+    window: {
+      resizable: true
+    }
+  };
+  get title() {
+    return game.i18n.localize("SR5.ChangelogApplication.Title");
   }
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.classes = ["shadowrun5e"];
-    options.title = game.i18n.localize("SR5.ChangelogApplication.Title");
-    options.width = 500;
-    options.height = "auto";
-    return options;
-  }
-  render(force, options) {
-    _ChangelogApplication.setRenderForCurrentVersion();
-    return super.render(force, options);
-  }
-  // Let the async operation happen in background.
-  static setRenderForCurrentVersion() {
-    game.user?.setFlag(SYSTEM_NAME, FLAGS.ChangelogShownForVersion, game.system.version);
+  async _onRender(context, options) {
+    await game.user?.setFlag(SYSTEM_NAME, FLAGS.ChangelogShownForVersion, game.system.version);
+    return super._onRender(context, options);
   }
   static get showApplication() {
-    if (!game.user?.isGM || !game.user?.isTrusted) return false;
-    const shownForVersion = game.user?.getFlag(SYSTEM_NAME, FLAGS.ChangelogShownForVersion);
+    if (!game.user?.isGM || !game.user.isTrusted) return false;
+    const shownForVersion = game.user.getFlag(SYSTEM_NAME, FLAGS.ChangelogShownForVersion);
     return shownForVersion !== game.system.version;
   }
 };
 
 // src/module/apps/SituationModifiersApplication.ts
-var ApplicationV29 = foundry.applications.api.ApplicationV2;
-var HandlebarsApplicationMixin10 = foundry.applications.api.HandlebarsApplicationMixin;
+var ApplicationV210 = foundry.applications.api.ApplicationV2;
+var HandlebarsApplicationMixin11 = foundry.applications.api.HandlebarsApplicationMixin;
 var ModifiersHandler = class {
   static {
     __name(this, "ModifiersHandler");
@@ -45210,7 +45215,7 @@ var RecoilModifiersHandler = class extends ModifiersHandler {
     modifierColumn.append(modifier);
   }
 };
-var SituationModifiersApplication = class _SituationModifiersApplication extends HandlebarsApplicationMixin10(ApplicationV29) {
+var SituationModifiersApplication = class _SituationModifiersApplication extends HandlebarsApplicationMixin11(ApplicationV210) {
   static {
     __name(this, "SituationModifiersApplication");
   }
@@ -45531,9 +45536,9 @@ var MoveInventoryDialog = class _MoveInventoryDialog extends PromptDialog {
 };
 
 // src/module/apps/actor/InventoryRenameApp.ts
-var ApplicationV210 = foundry.applications.api.ApplicationV2;
-var HandlebarsApplicationMixin11 = foundry.applications.api.HandlebarsApplicationMixin;
-var InventoryRenameApp = class _InventoryRenameApp extends HandlebarsApplicationMixin11(ApplicationV210) {
+var ApplicationV211 = foundry.applications.api.ApplicationV2;
+var HandlebarsApplicationMixin12 = foundry.applications.api.HandlebarsApplicationMixin;
+var InventoryRenameApp = class _InventoryRenameApp extends HandlebarsApplicationMixin12(ApplicationV211) {
   constructor(actor, inventory, actionMode, options = {}) {
     super(options);
     this.actor = actor;
@@ -47826,9 +47831,9 @@ var MatrixTargetingFlow = {
 };
 
 // src/module/apps/NetworkManager.ts
-var { ApplicationV2: ApplicationV211 } = foundry.applications.api;
+var { ApplicationV2: ApplicationV212 } = foundry.applications.api;
 var { fromUuid: fromUuid7, fromUuidSync: fromUuidSync6 } = foundry.utils;
-var NetworkManager = class _NetworkManager extends SR5ApplicationMixin(ApplicationV211) {
+var NetworkManager = class _NetworkManager extends SR5ApplicationMixin(ApplicationV212) {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
@@ -49167,9 +49172,9 @@ var SR5VehicleActorSheet = class _SR5VehicleActorSheet extends SR5MatrixActorShe
 };
 
 // src/module/apps/actor/NuyenManager.ts
-var ApplicationV212 = foundry.applications.api.ApplicationV2;
-var HandlebarsApplicationMixin12 = foundry.applications.api.HandlebarsApplicationMixin;
-var NuyenManager = class _NuyenManager extends HandlebarsApplicationMixin12(ApplicationV212) {
+var ApplicationV213 = foundry.applications.api.ApplicationV2;
+var HandlebarsApplicationMixin13 = foundry.applications.api.HandlebarsApplicationMixin;
+var NuyenManager = class _NuyenManager extends HandlebarsApplicationMixin13(ApplicationV213) {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
@@ -49261,9 +49266,9 @@ var NuyenManager = class _NuyenManager extends HandlebarsApplicationMixin12(Appl
 };
 
 // src/module/apps/actor/KarmaManager.ts
-var ApplicationV213 = foundry.applications.api.ApplicationV2;
-var HandlebarsApplicationMixin13 = foundry.applications.api.HandlebarsApplicationMixin;
-var KarmaManager = class _KarmaManager extends HandlebarsApplicationMixin13(ApplicationV213) {
+var ApplicationV214 = foundry.applications.api.ApplicationV2;
+var HandlebarsApplicationMixin14 = foundry.applications.api.HandlebarsApplicationMixin;
+var KarmaManager = class _KarmaManager extends HandlebarsApplicationMixin14(ApplicationV214) {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
@@ -49377,9 +49382,9 @@ var KarmaManager = class _KarmaManager extends HandlebarsApplicationMixin13(Appl
 };
 
 // src/module/apps/actor/ReputationManager.ts
-var ApplicationV214 = foundry.applications.api.ApplicationV2;
-var HandlebarsApplicationMixin14 = foundry.applications.api.HandlebarsApplicationMixin;
-var ReputationManager = class _ReputationManager extends HandlebarsApplicationMixin14(ApplicationV214) {
+var ApplicationV215 = foundry.applications.api.ApplicationV2;
+var HandlebarsApplicationMixin15 = foundry.applications.api.HandlebarsApplicationMixin;
+var ReputationManager = class _ReputationManager extends HandlebarsApplicationMixin15(ApplicationV215) {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
@@ -55104,7 +55109,7 @@ ___________________
     if (game.user?.isGM) {
       Migrator.BeginMigration();
       if (ChangelogApplication.showApplication)
-        new ChangelogApplication().render(true);
+        void new ChangelogApplication().render({ force: true });
     }
     Hooks.on("renderChatMessage", _HooksManager.chatMessageListeners.bind(_HooksManager));
     Hooks.on("renderJournalPageSheet", JournalEnrichers.setEnricherHooks.bind(JournalEnrichers));

@@ -540,7 +540,7 @@ ___________________
             Migrator.BeginMigration();
 
             if (ChangelogApplication.showApplication)
-                new ChangelogApplication().render(true);
+                void new ChangelogApplication().render({ force: true });
         }
 
         Hooks.on('renderChatMessage', HooksManager.chatMessageListeners.bind(HooksManager));
