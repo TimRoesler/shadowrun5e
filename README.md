@@ -1,57 +1,60 @@
-# Shadowrun5e for Foundry Virtual Tabletop
-[Installations-Manifest](https://raw.githubusercontent.com/TimRoesler/shadowrun5e/main/system.json)
+# Shadowrun 5e für Foundry VTT
 
-Dieser V14-Spiegel basiert auf dem aktuellen Quellstand des offiziellen
-[SR5-FoundryVTT-Projekts](https://github.com/SR5-FoundryVTT/SR5-FoundryVTT)
-und enthält zusätzliche Typkorrekturen sowie ein für Foundry 14.364 verifiziertes Manifest.
-Urheber- und Lizenzangaben des Originalprojekts bleiben unverändert erhalten.
+Dieses Repository stellt das Spielsystem **Shadowrun 5. Edition** für
+**Foundry Virtual Tabletop V14** bereit.
 
-[Manifest](https://raw.githubusercontent.com/SR5-FoundryVTT/SR5-FoundryVTT/master/system.json)
+## Installation in Foundry VTT
 
-Come on the FoundryVTT discord shadowrun5e channel and have a chat. :)
+Kopiere diese URL:
 
-We will always be happy to look at a Pull Request if there are features or bugs you'd like to work on.
+```text
+https://github.com/TimRoesler/shadowrun5e/releases/latest/download/system.json
+```
 
-Should you need an older version you can check [releases](https://github.com/SR5-FoundryVTT/SR5-FoundryVTT/releases) and reference the system.json on each release instead of FoundryVTTs system marketplace.
+Füge sie anschließend in Foundry VTT ein:
 
-## General Information (read before playing)
-It's complicated, it's a work in progress, but it is _kinda_ stable. We try to break as little as possible.
+1. Foundry VTT starten.
+2. **Spielsysteme** öffnen.
+3. **System installieren** auswählen.
+4. Die URL in das Feld **Manifest-URL** einfügen.
+5. Auf **Installieren** klicken.
 
-#### Currently supported rule sections
-- All character types
-- Most equipment types
-- Partially automated combat
-- Partially automated matrix and technomancy
-- Partially automated magic
-- Partially supported rigging
+Updates können danach direkt über die Foundry-Paketverwaltung installiert werden.
 
-## Learn more
-To learn more about the features of the system and how to use them, please visit [our wiki](http://sr5-foundryvtt.privateworks.com/index.php/Main_Page).
+## Kompatibilität
 
-## Report issues
-Found some problem? Please report it in our issue tracker or [on discord](https://discord.com/channels/170995199584108546/715689255606681660).
+- Systemversion: **0.36.2**
+- Foundry VTT: **Version 14**
+- Verifiziert mit: **Foundry VTT 14.364**
 
-## Want to help out?
-Great, thanks :) Please check [this wiki](https://github.com/SR5-FoundryVTT/SR5-FoundryVTT/wiki/How-to-help-out) for more information.
+## Funktionsumfang
 
-There is also the [README-dev.md](https://github.com/SR5-FoundryVTT/SR5-FoundryVTT/blob/master/README-DEV.md) for development.
+- Charaktere, Fahrzeuge, Geister, Sprites und IC
+- Ausrüstung, Waffen, Rüstung, Cyberware und Bioware
+- Kampf- und Initiativesystem
+- Matrix und Technomancer
+- Magie, Zauber und Beschwörung
+- Rigging und Fahrzeuge
+- Chummer-Import
+- deutsch- und englischsprachige Oberfläche
 
-## Licenses
+## Releases und Fehlerberichte
 
-- **Font Awesome**  
-  Icons provided by [Font Awesome](https://fontawesome.com).
-  The system uses a Font Awesome Pro license provided by one of our system authors ([Timothy J. Lanza](https://github.com/tjlanza)).
+- [Aktuelle Version](https://github.com/TimRoesler/shadowrun5e/releases/latest)
+- [Fehler melden](https://github.com/TimRoesler/shadowrun5e/issues)
 
-- **Bella Carvalho**  
-  Additional icons created by [Bella Carvalho](https://www.behance.net/bellcarvalho).  
-  Licensed under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/).
+## Herkunft
 
-- **Nodesto Font**  
-  Provided by Solbera and Ryrok.  
-  Source: [solbera-dnd-fonts](https://github.com/jonathonf/solbera-dnd-fonts)  
-  Licensed under [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/).
+Diese angepasste V14-Version basiert auf dem freien
+[SR5-FoundryVTT-Projekt](https://github.com/SR5-FoundryVTT/SR5-FoundryVTT).
+Die Namen der ursprünglichen Autoren sowie alle Lizenz- und Urheberhinweise bleiben
+erhalten.
 
----
+## Lizenz und Markenhinweis
 
-**Shadowrun** is a registered trademark and/or trademark of **The Topps Company, Inc.** in the United States and/or other countries.  
-This is a **fan project** and we are in no way associated with Topps or Catalyst Game Labs.
+Der Programmcode steht gemäß der Datei [LICENSE](LICENSE) unter der GNU General
+Public License Version 3.
+
+**Shadowrun** ist eine eingetragene Marke von The Topps Company, Inc. Dieses Projekt
+ist ein nichtkommerzielles Fanprojekt und steht in keiner Verbindung zu The Topps
+Company, Inc. oder Catalyst Game Labs.
