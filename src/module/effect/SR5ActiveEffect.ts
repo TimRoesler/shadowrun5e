@@ -7,6 +7,7 @@ import { DataDefaults } from "../data/DataDefaults";
 import { ModifiableValueType } from "../types/template/Base";
 import { ModifiableValue } from "../mods/ModifiableValue";
 import DataModel = foundry.abstract.DataModel;
+import { SR5_ACTIVE_EFFECT_MODES } from '../constants';
 
 /**
  * Shadowrun Active Effects implement additional ways of altering document data.
@@ -25,12 +26,12 @@ import DataModel = foundry.abstract.DataModel;
  */
 export class SR5ActiveEffect extends ActiveEffect {
     private static readonly legacyModeByChangeType: Record<string, number> = {
-        custom: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-        multiply: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
-        add: CONST.ACTIVE_EFFECT_MODES.ADD,
-        downgrade: CONST.ACTIVE_EFFECT_MODES.DOWNGRADE,
-        upgrade: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-        override: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+        custom: SR5_ACTIVE_EFFECT_MODES.CUSTOM,
+        multiply: SR5_ACTIVE_EFFECT_MODES.MULTIPLY,
+        add: SR5_ACTIVE_EFFECT_MODES.ADD,
+        downgrade: SR5_ACTIVE_EFFECT_MODES.DOWNGRADE,
+        upgrade: SR5_ACTIVE_EFFECT_MODES.UPGRADE,
+        override: SR5_ACTIVE_EFFECT_MODES.OVERRIDE,
     };
 
     /**
@@ -170,7 +171,7 @@ export class SR5ActiveEffect extends ActiveEffect {
         if (mappedMode !== undefined) return mappedMode;
 
         console.error(`Shadowrun5e | Unrecognized change type "${change.type}", defaulting to "add" mode.`);
-        return CONST.ACTIVE_EFFECT_MODES.ADD;
+        return SR5_ACTIVE_EFFECT_MODES.ADD;
     }
 
     override get isSuppressed(): boolean {

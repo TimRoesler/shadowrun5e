@@ -12,6 +12,14 @@
  */
 export const SYSTEM_NAME = 'shadowrun5e' as const;
 export const SYSTEM_SOCKET = `system.${SYSTEM_NAME}` as const;
+export const SR5_ACTIVE_EFFECT_MODES = Object.freeze({
+    CUSTOM: 0,
+    MULTIPLY: 1,
+    ADD: 2,
+    DOWNGRADE: 3,
+    UPGRADE: 4,
+    OVERRIDE: 5,
+} as const);
 export const FLAGS = {
     KEY_DATA_VERSION: 'systemMigrationVersion',
     ShowGlitchAnimation: 'showGlitchAnimation',
@@ -271,7 +279,7 @@ export const SRStatus = [
         img: 'systems/shadowrun5e/dist/icons/status-effects/run.svg',
         system: { applyTo: 'test_all' },
         changes: [
-            {key: "data.pool", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-2"},
+            {key: "data.pool", type: "add", value: "-2"},
         ],
     },
     {
@@ -280,7 +288,7 @@ export const SRStatus = [
         img: 'systems/shadowrun5e/dist/icons/status-effects/sprint.svg',
         system: { applyTo: 'test_all' },
         changes: [
-            {key: "data.pool", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-4"},
+            {key: "data.pool", type: "add", value: "-4"},
         ],
     },
-] as const satisfies CONFIG.StatusEffect[];
+] as const;

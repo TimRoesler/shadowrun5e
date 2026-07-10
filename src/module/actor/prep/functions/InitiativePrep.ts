@@ -1,6 +1,7 @@
 import { SR5Actor } from '../../SR5Actor';
 import { ModifiableValue } from '@/module/mods/ModifiableValue';
 import { InitiativeType } from '@/module/types/template/Initiative';
+import { SR5_ACTIVE_EFFECT_MODES } from '@/module/constants';
 
 const isKeyOf = <T extends object>(obj: T, key: PropertyKey): key is keyof T => key in obj;
 
@@ -64,7 +65,7 @@ export class InitiativePrep {
         // Apply blitz ini rules.
         if (initiative.blitz) {
             ModifiableValue.addUnique(initiative.current.dice, "SR5.Blitz", 5,
-                { mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, priority: ModifiableValue.TOP_PRIORITY }
+                { mode: SR5_ACTIVE_EFFECT_MODES.OVERRIDE, priority: ModifiableValue.TOP_PRIORITY }
             );
         }
         ModifiableValue.calcTotal(initiative.current.dice, {min: 0, max: 5});

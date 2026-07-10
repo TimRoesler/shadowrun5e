@@ -6,9 +6,13 @@ export type DocCreateData = (
 
 export type AECreateData = Omit<ActiveEffect.CreateData, "name"> & { name?: string, changes?: any[] };
 
-export type ActiveEffectMode = typeof CONST.ACTIVE_EFFECT_MODES[keyof typeof CONST.ACTIVE_EFFECT_MODES];
-export const { MULTIPLY, ADD, DOWNGRADE, UPGRADE, OVERRIDE } = CONST.ACTIVE_EFFECT_MODES;
-export type EffectChangeParameter = { key: string; value: string | number; mode?: number; priority?: ActiveEffectMode; };
+export type ActiveEffectType = 'custom' | 'multiply' | 'add' | 'subtract' | 'downgrade' | 'upgrade' | 'override';
+export const MULTIPLY = 'multiply' as const;
+export const ADD = 'add' as const;
+export const DOWNGRADE = 'downgrade' as const;
+export const UPGRADE = 'upgrade' as const;
+export const OVERRIDE = 'override' as const;
+export type EffectChangeParameter = { key: string; value: string | number; type?: ActiveEffectType; priority?: number; };
 
 export class BonusConstant {
     public static readonly skillGroupTable = {

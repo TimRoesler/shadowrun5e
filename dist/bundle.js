@@ -10858,6 +10858,14 @@ var preloadHandlebarsTemplates = /* @__PURE__ */ __name(async () => {
 // src/module/constants.ts
 var SYSTEM_NAME = "shadowrun5e";
 var SYSTEM_SOCKET = `system.${SYSTEM_NAME}`;
+var SR5_ACTIVE_EFFECT_MODES = Object.freeze({
+  CUSTOM: 0,
+  MULTIPLY: 1,
+  ADD: 2,
+  DOWNGRADE: 3,
+  UPGRADE: 4,
+  OVERRIDE: 5
+});
 var FLAGS = {
   KEY_DATA_VERSION: "systemMigrationVersion",
   ShowGlitchAnimation: "showGlitchAnimation",
@@ -11109,7 +11117,7 @@ var SRStatus = [
     img: "systems/shadowrun5e/dist/icons/status-effects/run.svg",
     system: { applyTo: "test_all" },
     changes: [
-      { key: "data.pool", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-2" }
+      { key: "data.pool", type: "add", value: "-2" }
     ]
   },
   {
@@ -11118,7 +11126,7 @@ var SRStatus = [
     img: "systems/shadowrun5e/dist/icons/status-effects/sprint.svg",
     system: { applyTo: "test_all" },
     changes: [
-      { key: "data.pool", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-4" }
+      { key: "data.pool", type: "add", value: "-4" }
     ]
   }
 ];
@@ -11203,7 +11211,7 @@ var ValueMaxPair = /* @__PURE__ */ __name(() => ({
 var ChangeEntry = /* @__PURE__ */ __name(() => ({
   // Default values for the change entry on Active Effects.
   name: new StringField3({ required: true }),
-  mode: new NumberField({ required: true, nullable: false, integer: true, initial: CONST.ACTIVE_EFFECT_MODES.ADD }),
+  mode: new NumberField({ required: true, nullable: false, integer: true, initial: SR5_ACTIVE_EFFECT_MODES.ADD }),
   value: new NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
   priority: new NumberField({
     required: true,
@@ -13529,7 +13537,7 @@ var ModifiableValue = class _ModifiableValue {
   _createChange(name, value, options = {}) {
     const createData = { name, value, ...options };
     if (typeof createData.mode === "string")
-      createData.mode = CONST.ACTIVE_EFFECT_MODES[createData.mode] ?? CONST.ACTIVE_EFFECT_MODES.ADD;
+      createData.mode = SR5_ACTIVE_EFFECT_MODES[createData.mode] ?? SR5_ACTIVE_EFFECT_MODES.ADD;
     if (createData.priority === void 0)
       createData.priority = createData.mode != null ? 10 * createData.mode : void 0;
     return DataDefaults.createData("change_entry", createData);
@@ -13624,18 +13632,18 @@ var ModifiableValue = class _ModifiableValue {
       change.invalidated = false;
       if (!change.enabled) continue;
       switch (change.mode) {
-        case CONST.ACTIVE_EFFECT_MODES.ADD:
-        case CONST.ACTIVE_EFFECT_MODES.CUSTOM:
+        case SR5_ACTIVE_EFFECT_MODES.ADD:
+        case SR5_ACTIVE_EFFECT_MODES.CUSTOM:
           this._field.value += change.value;
           break;
-        case CONST.ACTIVE_EFFECT_MODES.MULTIPLY:
+        case SR5_ACTIVE_EFFECT_MODES.MULTIPLY:
           this._field.value *= change.value;
           break;
-        case CONST.ACTIVE_EFFECT_MODES.OVERRIDE:
+        case SR5_ACTIVE_EFFECT_MODES.OVERRIDE:
           this._field.value = change.value;
           this._markPreviousChangesMasked(i2);
           break;
-        case CONST.ACTIVE_EFFECT_MODES.UPGRADE:
+        case SR5_ACTIVE_EFFECT_MODES.UPGRADE:
           if (this._field.value < change.value) {
             this._field.value = change.value;
             this._markPreviousChangesMasked(i2);
@@ -13643,7 +13651,7 @@ var ModifiableValue = class _ModifiableValue {
             change.invalidated = true;
           }
           break;
-        case CONST.ACTIVE_EFFECT_MODES.DOWNGRADE:
+        case SR5_ACTIVE_EFFECT_MODES.DOWNGRADE:
           if (this._field.value > change.value) {
             this._field.value = change.value;
             this._markPreviousChangesMasked(i2);
@@ -14055,7 +14063,7 @@ var InitiativePrep = class {
         initiative.current.dice,
         "SR5.Blitz",
         5,
-        { mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, priority: ModifiableValue.TOP_PRIORITY }
+        { mode: SR5_ACTIVE_EFFECT_MODES.OVERRIDE, priority: ModifiableValue.TOP_PRIORITY }
       );
     }
     ModifiableValue.calcTotal(initiative.current.dice, { min: 0, max: 5 });
@@ -17651,7 +17659,7 @@ var Version0_31_0 = class extends VersionMigration {
           name: tempField.label,
           changes: [{
             key: tempField.path,
-            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+            mode: SR5_ACTIVE_EFFECT_MODES.CUSTOM,
             priority: 0,
             value: String(tempField.value)
           }],
@@ -17861,12 +17869,12 @@ var Version0_33_0 = class extends VersionMigration {
   handlesActiveEffect(_effect) {
     const changes = getProperty3(_effect, "system.changes");
     if (!Array.isArray(changes) || changes.length === 0) return false;
-    return changes.filter((change) => change.mode === CONST.ACTIVE_EFFECT_MODES.CUSTOM).length > 0 || changes.filter((change) => change.type === "custom").length > 0;
+    return changes.filter((change) => change.mode === SR5_ACTIVE_EFFECT_MODES.CUSTOM).length > 0 || changes.filter((change) => change.type === "custom").length > 0;
   }
   migrateActiveEffect(effect) {
     for (const change of effect.system.changes) {
-      if (change.mode === CONST.ACTIVE_EFFECT_MODES.CUSTOM)
-        change.mode = CONST.ACTIVE_EFFECT_MODES.ADD;
+      if (change.mode === SR5_ACTIVE_EFFECT_MODES.CUSTOM)
+        change.mode = SR5_ACTIVE_EFFECT_MODES.ADD;
       if (change.type === "custom")
         change.type = "add";
     }
@@ -25036,12 +25044,12 @@ var SR5ActiveEffect = class _SR5ActiveEffect extends ActiveEffect {
     __name(this, "SR5ActiveEffect");
   }
   static legacyModeByChangeType = {
-    custom: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-    multiply: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
-    add: CONST.ACTIVE_EFFECT_MODES.ADD,
-    downgrade: CONST.ACTIVE_EFFECT_MODES.DOWNGRADE,
-    upgrade: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-    override: CONST.ACTIVE_EFFECT_MODES.OVERRIDE
+    custom: SR5_ACTIVE_EFFECT_MODES.CUSTOM,
+    multiply: SR5_ACTIVE_EFFECT_MODES.MULTIPLY,
+    add: SR5_ACTIVE_EFFECT_MODES.ADD,
+    downgrade: SR5_ACTIVE_EFFECT_MODES.DOWNGRADE,
+    upgrade: SR5_ACTIVE_EFFECT_MODES.UPGRADE,
+    override: SR5_ACTIVE_EFFECT_MODES.OVERRIDE
   };
   /**
    * Can be used to determine if the origin of the effect is a document owned by another document.
@@ -25155,7 +25163,7 @@ var SR5ActiveEffect = class _SR5ActiveEffect extends ActiveEffect {
     const mappedMode = this.legacyModeByChangeType[changeType];
     if (mappedMode !== void 0) return mappedMode;
     console.error(`Shadowrun5e | Unrecognized change type "${change.type}", defaulting to "add" mode.`);
-    return CONST.ACTIVE_EFFECT_MODES.ADD;
+    return SR5_ACTIVE_EFFECT_MODES.ADD;
   }
   get isSuppressed() {
     if (!(this.parent instanceof SR5Item)) return false;
@@ -34812,7 +34820,10 @@ var OpposedTest = class _OpposedTest extends SuccessTest {
     const opposedMod = this.item.getOpposedTestMod(this.data.pool);
     const pool = new ModifiableValue(this.data.pool);
     for (const modifier of opposedMod.changes) {
-      pool.addUnique(modifier.name, modifier.value, { mode: modifier.mode, priority: modifier.priority });
+      pool.addUnique(modifier.name, modifier.value, {
+        mode: modifier.mode,
+        priority: modifier.priority
+      });
     }
   }
   /**
@@ -42070,7 +42081,7 @@ var DataImporter = class _DataImporter {
 };
 
 // src/module/apps/itemImport/helper/BonusConstant.ts
-var { MULTIPLY, ADD, DOWNGRADE, UPGRADE, OVERRIDE } = CONST.ACTIVE_EFFECT_MODES;
+var OVERRIDE = "override";
 var BonusConstant = class {
   static {
     __name(this, "BonusConstant");
@@ -45643,7 +45654,7 @@ var EffectCreationFlow = {
       changes: [
         {
           key: path,
-          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          type: "add",
           priority: 0,
           value: ""
         }
