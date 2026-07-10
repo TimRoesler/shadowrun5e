@@ -4,11 +4,14 @@ on:
     release:
         types: [published]
 
+permissions:
+    contents: write
+
 jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - name: Install prerequisites
               run: sudo apt-get install moreutils
@@ -51,16 +54,3 @@ jobs:
                   tag: ${{ github.event.release.tag_name }}
                   body: ${{ github.event.release.body }}
 
-            - name: Deploy Release
-              if: github.event.release.prerelease == false
-              uses: fjogeleit/http-request-action@v1
-              env:
-                  MINIMUM: ${{ fromJson(env.MANIFEST_JSON).compatibility.minimum }}
-                  VERIFIED: ${{ fromJson(env.MANIFEST_JSON).compatibility.verified }}
-                  MAXIMUM: ${{ fromJson(env.MANIFEST_JSON).compatibility.maximum }}
-              with:
-                  url: 'https://api.foundryvtt.com/_api/packages/release_version'
-                  method: 'POST'
-                  contentType: 'application/json'
-                  customHeaders: '{"Authorization": "${{ secrets.FVTT_PACKAGE_RELEASE_TOKEN }}"}'
-                  data: '{"id": "shadowrun5e", "release":{"version":"v${{github.event.release.tag_name}}","manifest":"https://github.com/SR5-FoundryVTT/SR5-FoundryVTT/releases/latest/download/system.json","notes":"https://github.com/SR5-FoundryVTT/SR5-FoundryVTT/releases/tag/${{github.event.release.tag_name}}","compatibility":{"minimum":"${{ env.MINIMUM }}","verified":"${{ env.VERIFIED }}","maximum":"${{ env.MAXIMUM }}"}}}'
