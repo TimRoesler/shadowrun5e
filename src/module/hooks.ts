@@ -543,7 +543,7 @@ ___________________
                 void new ChangelogApplication().render({ force: true });
         }
 
-        Hooks.on('renderChatMessage', HooksManager.chatMessageListeners.bind(HooksManager));
+        Hooks.on('renderChatMessageHTML', HooksManager.chatMessageListeners.bind(HooksManager));
         Hooks.on('renderJournalPageSheet', JournalEnrichers.setEnricherHooks.bind(JournalEnrichers));
         HooksManager.registerSocketListeners();
     }

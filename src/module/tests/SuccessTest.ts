@@ -1766,7 +1766,7 @@ export class SuccessTest<T extends SuccessTestData = SuccessTestData> {
         const content = await renderTemplate(this._chatMessageTemplate, templateData);
         // Prepare the actual message.
         const messageData = await this._prepareMessageData(content);
-        const options = { rollMode: this._rollMode };
+        const options = { messageMode: this._rollMode };
 
         //@ts-expect-error // TODO: foundry-vtt-types v10
         const message = await ChatMessage.create(messageData, options);

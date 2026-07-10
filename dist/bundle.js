@@ -25048,7 +25048,7 @@ var DocumentSituationModifiers = class _DocumentSituationModifiers {
    */
   static async clearAllOn(document2) {
     if (document2 instanceof SR5Actor) {
-      await document2.update({ system: { "==situation_modifiers": _DocumentSituationModifiers._defaultModifiers } });
+      await document2.update({ system: { situation_modifiers: new foundry.data.operators.ForcedReplacement(_DocumentSituationModifiers._defaultModifiers) } });
     } else {
       await document2.unsetFlag(SYSTEM_NAME, FLAGS.Modifier);
       await document2.setFlag(SYSTEM_NAME, FLAGS.Modifier, _DocumentSituationModifiers._defaultModifiers);
@@ -25140,7 +25140,7 @@ var DocumentSituationModifiers = class _DocumentSituationModifiers {
    */
   static async setDocumentModifiers(document2, modifiers) {
     if (document2 instanceof SR5Actor) {
-      await document2.update({ system: { "==situation_modifiers": modifiers } });
+      await document2.update({ system: { situation_modifiers: new foundry.data.operators.ForcedReplacement(modifiers) } });
     } else {
       await document2.unsetFlag(SYSTEM_NAME, FLAGS.Modifier);
       await document2.setFlag(SYSTEM_NAME, FLAGS.Modifier, modifiers);
@@ -28877,7 +28877,7 @@ var SuccessTest = class {
     const templateData = await this._prepareMessageTemplateData();
     const content = await renderTemplate4(this._chatMessageTemplate, templateData);
     const messageData = await this._prepareMessageData(content);
-    const options = { rollMode: this._rollMode };
+    const options = { messageMode: this._rollMode };
     const message = await ChatMessage.create(messageData, options);
     if (!message) return;
     this.data.messageUuid = message.uuid;
@@ -57162,7 +57162,7 @@ ___________________
       if (ChangelogApplication.showApplication)
         void new ChangelogApplication().render({ force: true });
     }
-    Hooks.on("renderChatMessage", _HooksManager.chatMessageListeners.bind(_HooksManager));
+    Hooks.on("renderChatMessageHTML", _HooksManager.chatMessageListeners.bind(_HooksManager));
     Hooks.on("renderJournalPageSheet", JournalEnrichers.setEnricherHooks.bind(JournalEnrichers));
     _HooksManager.registerSocketListeners();
   }
