@@ -1016,7 +1016,7 @@ export class SR5ItemSheet<T extends SR5BaseItemSheetData = SR5ItemSheetData> ext
         return [
             SheetFlow._getSourceContextOption(),
             {
-                name: "SR5.ContextOptions.EditItem",
+                label: "SR5.ContextOptions.EditItem",
                 icon: "<i class='fas fa-pen-to-square'></i>",
                 callback: async (target: HTMLElement) => {
                     const id = SheetFlow.closestItemId(target);
@@ -1027,7 +1027,7 @@ export class SR5ItemSheet<T extends SR5BaseItemSheetData = SR5ItemSheetData> ext
                 }
             },
             {
-                name: "SR5.ContextOptions.DeleteItem",
+                label: "SR5.ContextOptions.DeleteItem",
                 icon: "<i class='fas fa-trash'></i>",
                 callback: async (target: HTMLElement) => {
                     const userConsented = await Helpers.confirmDeletion();
@@ -1046,7 +1046,7 @@ export class SR5ItemSheet<T extends SR5BaseItemSheetData = SR5ItemSheetData> ext
         return [
             SheetFlow._getSourceContextOption(),
             {
-                name: "SR5.ContextOptions.EditEffect",
+                label: "SR5.ContextOptions.EditEffect",
                 icon: "<i class='fas fa-pen-to-square'></i>",
                 callback: async (target: HTMLElement) => {
                     const id = SheetFlow.closestEffectId(target);
@@ -1063,9 +1063,9 @@ export class SR5ItemSheet<T extends SR5BaseItemSheetData = SR5ItemSheetData> ext
                 }
             },
             {
-                name: "SR5.ContextOptions.DeleteEffect",
+                label: "SR5.ContextOptions.DeleteEffect",
                 icon: "<i class='fas fa-trash'></i>",
-                condition: (target: HTMLElement) => {
+                visible: (target: HTMLElement) => {
                     const id = SheetFlow.closestEffectId(target);
                     const item = this.item.effects.get(id);
                     return item !== undefined;

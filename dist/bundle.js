@@ -23829,9 +23829,9 @@ var SheetFlow = {
    */
   _getSourceContextOption() {
     return {
-      name: "SR5.ContextOptions.Source",
+      label: "SR5.ContextOptions.Source",
       icon: "<i class='fas fa-page'></i>",
-      condition: /* @__PURE__ */ __name((target) => {
+      visible: /* @__PURE__ */ __name((target) => {
         const source = this.closestSource(target);
         return !!source;
       }, "condition"),
@@ -27148,21 +27148,21 @@ var SuccessTest = class {
     }, "extendTest");
     const deleteOption = options.pop();
     options.push({
-      name: game.i18n.localize("SR5.PushTheLimit"),
+      label: game.i18n.localize("SR5.PushTheLimit"),
       callback: pushTheLimit,
-      condition: true,
+      visible: true,
       icon: '<i class="fas fa-meteor"></i>'
     });
     options.push({
-      name: game.i18n.localize("SR5.SecondChance"),
+      label: game.i18n.localize("SR5.SecondChance"),
       callback: secondChance,
-      condition: true,
+      visible: true,
       icon: '<i class="fas fa-meteor"></i>'
     });
     options.push({
-      name: game.i18n.localize("SR5.Extend"),
+      label: game.i18n.localize("SR5.Extend"),
       callback: extendTest,
-      condition: true,
+      visible: true,
       icon: '<i class="fas fa-clock"></i>'
     });
     options.push(deleteOption);
@@ -38254,7 +38254,7 @@ var SR5ItemSheet = class _SR5ItemSheet extends SR5ApplicationMixin(ItemSheet) {
     return [
       SheetFlow._getSourceContextOption(),
       {
-        name: "SR5.ContextOptions.EditItem",
+        label: "SR5.ContextOptions.EditItem",
         icon: "<i class='fas fa-pen-to-square'></i>",
         callback: /* @__PURE__ */ __name(async (target) => {
           const id = SheetFlow.closestItemId(target);
@@ -38265,7 +38265,7 @@ var SR5ItemSheet = class _SR5ItemSheet extends SR5ApplicationMixin(ItemSheet) {
         }, "callback")
       },
       {
-        name: "SR5.ContextOptions.DeleteItem",
+        label: "SR5.ContextOptions.DeleteItem",
         icon: "<i class='fas fa-trash'></i>",
         callback: /* @__PURE__ */ __name(async (target) => {
           const userConsented = await Helpers.confirmDeletion();
@@ -38283,7 +38283,7 @@ var SR5ItemSheet = class _SR5ItemSheet extends SR5ApplicationMixin(ItemSheet) {
     return [
       SheetFlow._getSourceContextOption(),
       {
-        name: "SR5.ContextOptions.EditEffect",
+        label: "SR5.ContextOptions.EditEffect",
         icon: "<i class='fas fa-pen-to-square'></i>",
         callback: /* @__PURE__ */ __name(async (target) => {
           const id = SheetFlow.closestEffectId(target);
@@ -38300,9 +38300,9 @@ var SR5ItemSheet = class _SR5ItemSheet extends SR5ApplicationMixin(ItemSheet) {
         }, "callback")
       },
       {
-        name: "SR5.ContextOptions.DeleteEffect",
+        label: "SR5.ContextOptions.DeleteEffect",
         icon: "<i class='fas fa-trash'></i>",
-        condition: /* @__PURE__ */ __name((target) => {
+        visible: /* @__PURE__ */ __name((target) => {
           const id = SheetFlow.closestEffectId(target);
           const item = this.item.effects.get(id);
           return item !== void 0;
@@ -39455,9 +39455,9 @@ var SR5CombatTracker = class _SR5CombatTracker extends CombatTracker {
   _getEntryContextOptions() {
     const options = super._getEntryContextOptions();
     options.splice(1, 0, {
-      name: game.i18n.localize("SR5.COMBAT.SeizeInitiative"),
+      label: game.i18n.localize("SR5.COMBAT.SeizeInitiative"),
       icon: '<i class="fa-solid fa-angles-up"></i>',
-      condition: /* @__PURE__ */ __name((li) => {
+      visible: /* @__PURE__ */ __name((li) => {
         const combatant = this._getCombatant(li);
         if (!combatant) return false;
         const edge = combatant.actor?.system.attributes.edge;
@@ -47276,7 +47276,7 @@ var SR5BaseActorSheet = class _SR5BaseActorSheet extends SR5ApplicationMixin(Act
     return [
       SheetFlow._getSourceContextOption(),
       {
-        name: "SR5.ContextOptions.AddSkillEffect",
+        label: "SR5.ContextOptions.AddSkillEffect",
         icon: "<i class='fas fa-file-circle-plus'></i>",
         callback: /* @__PURE__ */ __name(async (target) => {
           const skillTarget = this._closestSkillTarget(target);
@@ -47285,14 +47285,14 @@ var SR5BaseActorSheet = class _SR5BaseActorSheet extends SR5ApplicationMixin(Act
         }, "callback")
       },
       {
-        name: "SR5.ContextOptions.EditSkill",
+        label: "SR5.ContextOptions.EditSkill",
         icon: "<i class='fas fa-pen-to-square'></i>",
         callback: /* @__PURE__ */ __name(async (target) => {
           await this._editSkill(target);
         }, "callback")
       },
       {
-        name: "SR5.ContextOptions.DeleteSkill",
+        label: "SR5.ContextOptions.DeleteSkill",
         icon: "<i class='fas fa-trash'></i>",
         callback: /* @__PURE__ */ __name(async (target) => {
           const userConsented = await Helpers.confirmDeletion();
@@ -47309,7 +47309,7 @@ var SR5BaseActorSheet = class _SR5BaseActorSheet extends SR5ApplicationMixin(Act
     return [
       SheetFlow._getSourceContextOption(),
       {
-        name: "SR5.ContextOptions.AddAttributeEffect",
+        label: "SR5.ContextOptions.AddAttributeEffect",
         icon: "<i class='fas fa-file-circle-plus'></i>",
         callback: /* @__PURE__ */ __name(async (target) => {
           const attributeId = target.closest("[data-attribute-id]")?.dataset.attributeId;
@@ -47348,9 +47348,9 @@ var SR5BaseActorSheet = class _SR5BaseActorSheet extends SR5ApplicationMixin(Act
       SheetFlow._getSourceContextOption(),
       {
         // context menu to view items that aren't an embedded item of this actor
-        name: "SR5.ContextOptions.ViewItem",
+        label: "SR5.ContextOptions.ViewItem",
         icon: "<i class='fas fa-eye'></i>",
-        condition: /* @__PURE__ */ __name((target) => {
+        visible: /* @__PURE__ */ __name((target) => {
           const id = SheetFlow.closestItemId(target);
           const item = this.actor.items.get(id);
           if (item) return false;
@@ -47367,9 +47367,9 @@ var SR5BaseActorSheet = class _SR5BaseActorSheet extends SR5ApplicationMixin(Act
         }, "callback")
       },
       {
-        name: "SR5.ContextOptions.EditItem",
+        label: "SR5.ContextOptions.EditItem",
         icon: "<i class='fas fa-pen-to-square'></i>",
-        condition: /* @__PURE__ */ __name((target) => {
+        visible: /* @__PURE__ */ __name((target) => {
           const id = SheetFlow.closestItemId(target);
           const item = this.actor.items.get(id);
           return item !== void 0;
@@ -47383,9 +47383,9 @@ var SR5BaseActorSheet = class _SR5BaseActorSheet extends SR5ApplicationMixin(Act
         }, "callback")
       },
       {
-        name: "SR5.ContextOptions.MoveItem",
+        label: "SR5.ContextOptions.MoveItem",
         icon: "<i class='fas fa-arrow-right-arrow-left'></i>",
-        condition: /* @__PURE__ */ __name((target) => {
+        visible: /* @__PURE__ */ __name((target) => {
           const id = SheetFlow.closestItemId(target);
           const item = this.actor.items.get(id);
           if (!item) return false;
@@ -47396,9 +47396,9 @@ var SR5BaseActorSheet = class _SR5BaseActorSheet extends SR5ApplicationMixin(Act
         }, "callback")
       },
       {
-        name: "SR5.ContextOptions.DeleteItem",
+        label: "SR5.ContextOptions.DeleteItem",
         icon: "<i class='fas fa-trash'></i>",
-        condition: /* @__PURE__ */ __name((target) => {
+        visible: /* @__PURE__ */ __name((target) => {
           const id = SheetFlow.closestItemId(target);
           const item = this.actor.items.get(id);
           return item !== void 0;
@@ -47419,9 +47419,9 @@ var SR5BaseActorSheet = class _SR5BaseActorSheet extends SR5ApplicationMixin(Act
     return [
       SheetFlow._getSourceContextOption(),
       {
-        name: "SR5.ContextOptions.EditEffect",
+        label: "SR5.ContextOptions.EditEffect",
         icon: "<i class='fas fa-pen-to-square'></i>",
-        condition: /* @__PURE__ */ __name((target) => {
+        visible: /* @__PURE__ */ __name((target) => {
           const id = SheetFlow.closestEffectId(target);
           const item = this.actor.effects.get(id);
           if (item) return true;
@@ -47444,9 +47444,9 @@ var SR5BaseActorSheet = class _SR5BaseActorSheet extends SR5ApplicationMixin(Act
         }, "callback")
       },
       {
-        name: "SR5.ContextOptions.DeleteEffect",
+        label: "SR5.ContextOptions.DeleteEffect",
         icon: "<i class='fas fa-trash'></i>",
-        condition: /* @__PURE__ */ __name((target) => {
+        visible: /* @__PURE__ */ __name((target) => {
           const id = SheetFlow.closestEffectId(target);
           const item = this.actor.effects.get(id);
           return item !== void 0;

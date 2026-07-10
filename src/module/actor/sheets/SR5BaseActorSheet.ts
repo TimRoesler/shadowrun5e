@@ -2161,7 +2161,7 @@ export class SR5BaseActorSheet<T extends SR5ActorSheetData = SR5ActorSheetData> 
         return [
             SheetFlow._getSourceContextOption(),
             {
-                name: "SR5.ContextOptions.AddSkillEffect",
+                label: "SR5.ContextOptions.AddSkillEffect",
                 icon: "<i class='fas fa-file-circle-plus'></i>",
                 callback: async (target: HTMLElement) => {
                     const skillTarget = this._closestSkillTarget(target)!;
@@ -2171,14 +2171,14 @@ export class SR5BaseActorSheet<T extends SR5ActorSheetData = SR5ActorSheetData> 
                 }
             },
             {
-                name: "SR5.ContextOptions.EditSkill",
+                label: "SR5.ContextOptions.EditSkill",
                 icon: "<i class='fas fa-pen-to-square'></i>",
                 callback: async (target: HTMLElement) => {
                     await this._editSkill(target);
                 }
             },
             {
-                name: "SR5.ContextOptions.DeleteSkill",
+                label: "SR5.ContextOptions.DeleteSkill",
                 icon: "<i class='fas fa-trash'></i>",
                 callback: async (target: HTMLElement) => {
                     const userConsented = await Helpers.confirmDeletion();
@@ -2197,7 +2197,7 @@ export class SR5BaseActorSheet<T extends SR5ActorSheetData = SR5ActorSheetData> 
         return [
             SheetFlow._getSourceContextOption(),
             {
-                name: "SR5.ContextOptions.AddAttributeEffect",
+                label: "SR5.ContextOptions.AddAttributeEffect",
                 icon: "<i class='fas fa-file-circle-plus'></i>",
                 callback: async (target: HTMLElement) => {
                     const attributeId = (target.closest<HTMLElement>('[data-attribute-id]'))?.dataset.attributeId;
@@ -2237,9 +2237,9 @@ export class SR5BaseActorSheet<T extends SR5ActorSheetData = SR5ActorSheetData> 
             SheetFlow._getSourceContextOption(),
             {
                 // context menu to view items that aren't an embedded item of this actor
-                name: "SR5.ContextOptions.ViewItem",
+                label: "SR5.ContextOptions.ViewItem",
                 icon: "<i class='fas fa-eye'></i>",
-                condition: (target: HTMLElement) => {
+                visible: (target: HTMLElement) => {
                     const id = SheetFlow.closestItemId(target);
                     const item = this.actor.items.get(id);
                     if (item) return false;
@@ -2256,9 +2256,9 @@ export class SR5BaseActorSheet<T extends SR5ActorSheetData = SR5ActorSheetData> 
                 }
             },
             {
-                name: "SR5.ContextOptions.EditItem",
+                label: "SR5.ContextOptions.EditItem",
                 icon: "<i class='fas fa-pen-to-square'></i>",
-                condition: (target: HTMLElement) => {
+                visible: (target: HTMLElement) => {
                     const id = SheetFlow.closestItemId(target);
                     const item = this.actor.items.get(id);
                     return item !== undefined;
@@ -2272,9 +2272,9 @@ export class SR5BaseActorSheet<T extends SR5ActorSheetData = SR5ActorSheetData> 
                 }
             },
             {
-                name: "SR5.ContextOptions.MoveItem",
+                label: "SR5.ContextOptions.MoveItem",
                 icon: "<i class='fas fa-arrow-right-arrow-left'></i>",
-                condition: (target: HTMLElement) => {
+                visible: (target: HTMLElement) => {
                     const id = SheetFlow.closestItemId(target);
                     const item = this.actor.items.get(id);
                     if (!item) return false;
@@ -2285,9 +2285,9 @@ export class SR5BaseActorSheet<T extends SR5ActorSheetData = SR5ActorSheetData> 
                 }
             },
             {
-                name: "SR5.ContextOptions.DeleteItem",
+                label: "SR5.ContextOptions.DeleteItem",
                 icon: "<i class='fas fa-trash'></i>",
-                condition: (target: HTMLElement) => {
+                visible: (target: HTMLElement) => {
                     const id = SheetFlow.closestItemId(target);
                     const item = this.actor.items.get(id);
                     return item !== undefined;
@@ -2310,9 +2310,9 @@ export class SR5BaseActorSheet<T extends SR5ActorSheetData = SR5ActorSheetData> 
         return [
             SheetFlow._getSourceContextOption(),
             {
-                name: "SR5.ContextOptions.EditEffect",
+                label: "SR5.ContextOptions.EditEffect",
                 icon: "<i class='fas fa-pen-to-square'></i>",
-                condition: (target: HTMLElement) => {
+                visible: (target: HTMLElement) => {
                     const id = SheetFlow.closestEffectId(target);
                     const item = this.actor.effects.get(id);
                     if (item) return true;
@@ -2335,9 +2335,9 @@ export class SR5BaseActorSheet<T extends SR5ActorSheetData = SR5ActorSheetData> 
                 }
             },
             {
-                name: "SR5.ContextOptions.DeleteEffect",
+                label: "SR5.ContextOptions.DeleteEffect",
                 icon: "<i class='fas fa-trash'></i>",
-                condition: (target: HTMLElement) => {
+                visible: (target: HTMLElement) => {
                     const id = SheetFlow.closestEffectId(target);
                     const item = this.actor.effects.get(id);
                     return item !== undefined;
