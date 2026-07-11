@@ -1,4 +1,5 @@
 import { BlankItem, ExtractItemType, Parser } from "../Parser";
+import { parseChummerDecimal } from "../ChummerNumberParser";
 
 type WareType = 'bioware' | 'cyberware';
 
@@ -16,7 +17,7 @@ export class WareModParser extends Parser<'modification'> {
 
         system.type = 'ware';
         system.technology.equipped = true;
-        system.essence = parseFloat(itemData.ess) || 0;
+        system.essence = parseChummerDecimal(itemData.ess);
         system.slots = parseInt(itemData.capacity.replace(/[[\]]/g, '')) || 0;
 
         if (this.wareType === 'bioware') {
