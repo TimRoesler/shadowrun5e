@@ -8,6 +8,8 @@ import { QuenchBatchContext } from '@ethaks/fvtt-quench';
 import { ImportHelper as IH } from '@/module/apps/itemImport/helper/ImportHelper';
 import { CharacterImporter as CI, ImportOptionsType } from '../../module/apps/actorImport/characterImporter/CharacterImporter';
 import { parseChummerDecimal } from '@/module/apps/actorImport/itemImporter/ChummerNumberParser';
+import { calculateChummerNuyen } from '@/module/apps/actorImport/characterImporter/ChummerNuyenCalculator';
+import { ActorSchema } from '@/module/apps/actorImport/ActorSchema';
 
 export const characterImporterTesting = (context: QuenchBatchContext) => {
     const factory = new SR5TestFactory();
@@ -41,6 +43,21 @@ export const characterImporterTesting = (context: QuenchBatchContext) => {
             assert.strictEqual(parseChummerDecimal('0.40'), 0.4, 'English decimal separator');
             assert.strictEqual(parseChummerDecimal(' 0,10 '), 0.1, 'Whitespace');
             assert.strictEqual(parseChummerDecimal('invalid'), 0, 'Invalid value');
+        });
+
+        it('Should subtract creation purchases from the exported Nuyen budget', () => {
+            const creationCharacter = {
+                created: 'False',
+                nuyen: '450.000',
+                armors: { armor: [{ cost: '4.500' }, { cost: '500' }] },
+                weapons: { weapon: { cost: '1.250' } },
+                cyberwares: { cyberware: [{ cost: '5.000' }, { cost: '1.000' }, { cost: '17.000' }] },
+                gears: { gear: [{ cost: '2.500' }, { cost: '350.310' }, { cost: '100' }, { cost: '10.000' }, { cost: '5.000' }] },
+                lifestyles: { lifestyle: { totalcost: '5.000' } },
+            } as unknown as ActorSchema;
+
+            assert.strictEqual(calculateChummerNuyen(creationCharacter), 47840);
+            assert.strictEqual(calculateChummerNuyen({ ...creationCharacter, created: 'True' }), 450000);
         });
 
         it('Should import a chummer character', async () => {

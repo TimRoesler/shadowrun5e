@@ -9,6 +9,7 @@ import { ActorSchema } from "../ActorSchema";
 import { MugshotImport } from "../MugshotImport";
 import { ItemsParser } from "../itemImporter/ItemsParser";
 import { VehicleParser } from "../itemImporter/vehicleImport/VehicleParser";
+import { calculateChummerNuyen } from "./ChummerNuyenCalculator";
 
 // Type Definitions
 export type ImportOptionsType = Partial<{
@@ -140,7 +141,7 @@ export class CharacterImporter {
         system.public_awareness = Number(chummerChar.calculatedpublicawareness) || 0;
         system.karma.value = Number(chummerChar.karma) || 0;
         system.karma.max = Number(chummerChar.totalkarma) || 0;
-        system.nuyen = parseInt(chummerChar.nuyen.replace(/[,.]/g, ''));
+        system.nuyen = calculateChummerNuyen(chummerChar);
 
         if (chummerChar.technomancer === 'True') {
             system.special = 'resonance';
