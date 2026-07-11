@@ -23,7 +23,7 @@ Updates können danach direkt über die Foundry-Paketverwaltung installiert werd
 
 ## Kompatibilität
 
-- Systemversion: **0.36.4**
+- Systemversion: **0.36.1.1**
 - Foundry VTT: **Version 14**
 - Verifiziert mit: **Foundry VTT 14.364**
 

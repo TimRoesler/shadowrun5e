@@ -23,6 +23,10 @@ jobs:
                   DOWNLOAD: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/shadowrun5e.zip
                   VERSION: ${{github.event.release.tag_name}}
               run: |
+                    if [[ ! "${VERSION}" =~ ^0\.36\.1\.[0-9]+$ ]]; then
+                      echo "Release tag must use fork versioning 0.36.1.x: ${VERSION}"
+                      exit 1
+                    fi
                     sudo apt-get install moreutils
                     jq --arg url $URL '.url=$url' system.json | sponge system.json
                     jq --arg manifest $MANIFEST '.manifest=$manifest' system.json | sponge system.json
@@ -53,4 +57,3 @@ jobs:
                   artifacts: './system.json, ./shadowrun5e.zip'
                   tag: ${{ github.event.release.tag_name }}
                   body: ${{ github.event.release.body }}
-
