@@ -10,6 +10,7 @@ import { MugshotImport } from "../MugshotImport";
 import { ItemsParser } from "../itemImporter/ItemsParser";
 import { VehicleParser } from "../itemImporter/vehicleImport/VehicleParser";
 import { calculateChummerNuyen } from "./ChummerNuyenCalculator";
+import { calculateChummerKarma } from "./ChummerKarmaCalculator";
 
 // Type Definitions
 export type ImportOptionsType = Partial<{
@@ -139,7 +140,7 @@ export class CharacterImporter {
         system.street_cred = Number(chummerChar.calculatedstreetcred) || 0;
         system.notoriety = Number(chummerChar.calculatednotoriety) || 0;
         system.public_awareness = Number(chummerChar.calculatedpublicawareness) || 0;
-        system.karma.value = Number(chummerChar.karma) || 0;
+        system.karma.value = calculateChummerKarma(chummerChar);
         system.karma.max = Number(chummerChar.totalkarma) || 0;
         system.nuyen = calculateChummerNuyen(chummerChar);
 

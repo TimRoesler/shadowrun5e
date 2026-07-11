@@ -10,6 +10,7 @@ import { CharacterImporter as CI, ImportOptionsType } from '../../module/apps/ac
 import { parseChummerDecimal } from '@/module/apps/actorImport/itemImporter/ChummerNumberParser';
 import { calculateChummerNuyen } from '@/module/apps/actorImport/characterImporter/ChummerNuyenCalculator';
 import { ActorSchema } from '@/module/apps/actorImport/ActorSchema';
+import { calculateChummerKarma } from '@/module/apps/actorImport/characterImporter/ChummerKarmaCalculator';
 
 export const characterImporterTesting = (context: QuenchBatchContext) => {
     const factory = new SR5TestFactory();
@@ -58,6 +59,23 @@ export const characterImporterTesting = (context: QuenchBatchContext) => {
 
             assert.strictEqual(calculateChummerNuyen(creationCharacter), 47840);
             assert.strictEqual(calculateChummerNuyen({ ...creationCharacter, created: 'True' }), 450000);
+        });
+
+        it('Should credit unspent creation Karma from selected qualities', () => {
+            const creationCharacter = {
+                created: 'False',
+                karma: '0',
+                qualities: {
+                    quality: [
+                        { qualitysource: 'Heritage', bp: '20' },
+                        { qualitysource: 'Selected', bp: '5' },
+                        { qualitysource: 'Selected', bp: '10' },
+                    ],
+                },
+            } as unknown as ActorSchema;
+
+            assert.strictEqual(calculateChummerKarma(creationCharacter), 10);
+            assert.strictEqual(calculateChummerKarma({ ...creationCharacter, created: 'True', karma: '7' }), 7);
         });
 
         it('Should import a chummer character', async () => {
