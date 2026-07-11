@@ -3,6 +3,7 @@ import { Sanitizer } from "@/module/sanitizer/Sanitizer";
 import { IconAssign } from "../../iconAssigner/IconAssign";
 import { DataDefaults, SystemEntityType } from "src/module/data/DataDefaults";
 import { ImportHelper as IH } from "@/module/apps/itemImport/helper/ImportHelper";
+import { parseChummerNuyen } from "./ChummerNumberParser";
 
 export type ItemSystems = SystemEntityType & Item.ConfiguredSubType;
 
@@ -101,7 +102,7 @@ export abstract class Parser<T extends ItemSystems> {
             technology.quantity = Number(itemData.qty) || 0;
 
         if (itemData.owncost != null)
-            technology.cost = Number(itemData.owncost.replace(/[^\d.-]/g, "")) || 0;
+            technology.cost = parseChummerNuyen(itemData.owncost);
 
         if (itemData.equipped != null)
             technology.equipped = itemData.equipped === "True";

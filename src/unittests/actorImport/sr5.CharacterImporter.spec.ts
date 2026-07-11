@@ -7,7 +7,13 @@ import { SR5TestFactory } from 'src/unittests/utils';
 import { QuenchBatchContext } from '@ethaks/fvtt-quench';
 import { ImportHelper as IH } from '@/module/apps/itemImport/helper/ImportHelper';
 import { CharacterImporter as CI, ImportOptionsType } from '../../module/apps/actorImport/characterImporter/CharacterImporter';
-import { parseChummerDecimal } from '@/module/apps/actorImport/itemImporter/ChummerNumberParser';
+import {
+    calculateChummerGearOwnCost,
+    parseChummerCapacitySlots,
+    parseChummerCapacityTotal,
+    parseChummerDecimal,
+    parseChummerNuyen,
+} from '@/module/apps/actorImport/itemImporter/ChummerNumberParser';
 import { calculateChummerNuyen } from '@/module/apps/actorImport/characterImporter/ChummerNuyenCalculator';
 import { ActorSchema } from '@/module/apps/actorImport/ActorSchema';
 import { calculateChummerKarma } from '@/module/apps/actorImport/characterImporter/ChummerKarmaCalculator';
@@ -44,6 +50,19 @@ export const characterImporterTesting = (context: QuenchBatchContext) => {
             assert.strictEqual(parseChummerDecimal('0.40'), 0.4, 'English decimal separator');
             assert.strictEqual(parseChummerDecimal(' 0,10 '), 0.1, 'Whitespace');
             assert.strictEqual(parseChummerDecimal('invalid'), 0, 'Invalid value');
+        });
+
+        it('Should parse localized costs and dynamic ware capacity', () => {
+            assert.strictEqual(parseChummerNuyen('350.310'), 350310);
+            assert.strictEqual(parseChummerNuyen('350,310'), 350310);
+            assert.strictEqual(calculateChummerGearOwnCost({
+                cost: '350.310',
+                children: { gear: [{ cost: '5.310' }, { cost: '0' }] },
+            }), 345000);
+            assert.strictEqual(parseChummerCapacityTotal('(Rating * 4)', 2), 8);
+            assert.strictEqual(parseChummerCapacityTotal('[4]', 0), 0);
+            assert.strictEqual(parseChummerCapacitySlots('[Rating]', 2), 2);
+            assert.strictEqual(parseChummerCapacitySlots('[*]', 0), 0);
         });
 
         it('Should subtract creation purchases from the exported Nuyen budget', () => {

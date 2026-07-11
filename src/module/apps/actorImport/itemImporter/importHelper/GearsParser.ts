@@ -5,12 +5,16 @@ import { AmmoParser } from '../weaponImport/AmmoParser';
 import { DeviceParser } from '../matrixImport/DeviceParser';
 import { ProgramParser } from '../matrixImport/ProgramParser';
 import { ImportHelper as IH } from '@/module/apps/itemImport/helper/ImportHelper';
+import { calculateChummerGearOwnCost } from '../ChummerNumberParser';
 
 type ItemType = ExtractItemType<'gears', 'gear'>[] | ExtractItemType<'gears', 'gear'> | undefined;
 
 export class GearsParser {
     async parseItems(itemsData: ItemType) {
-        const allGears = IH.getArray(itemsData);
+        const allGears = IH.getArray(itemsData).map(gear => ({
+            ...gear,
+            owncost: String(calculateChummerGearOwnCost(gear)),
+        }));
         const devices: typeof allGears = [];
         const sins: typeof allGears = [];
         const ammos: typeof allGears = [];

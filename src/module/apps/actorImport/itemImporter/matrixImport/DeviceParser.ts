@@ -1,4 +1,5 @@
 import { BlankItem, ExtractItemType, Parser } from "../Parser";
+import { GearsParser } from "../importHelper/GearsParser";
 
 /**
  * Parses devices (commlinks, decks, and RCCs)
@@ -32,5 +33,9 @@ export class DeviceParser extends Parser<'device'> {
 
     protected override parseCategoryFlags(item: BlankItem<'device'>, itemData: ExtractItemType<'gears', 'gear'>) {
         return item.system.category;
+    }
+
+    protected override async getEmbeddedItems(itemData: ExtractItemType<'gears', 'gear'>): Promise<Item.Source[]> {
+        return await new GearsParser().parseItems(itemData.children?.gear) as Item.Source[];
     }
 }
