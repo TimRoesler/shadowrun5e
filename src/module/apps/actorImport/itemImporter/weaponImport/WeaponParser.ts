@@ -118,8 +118,14 @@ export class WeaponParser extends Parser<'weapon'> {
         {
             //TODO change this to 'rawdamage' when mods can have damage value
             const chummerDamage = this.parseDamage(itemData.damage_noammo_english);
-            damage.base = chummerDamage.damage;
-            damage.type.base = chummerDamage.type;
+            // Chummer's damage_noammo_english is already resolved and folds in the
+            // linked attribute (e.g. STR for melee). Only adopt it as a flat base when the
+            // seed item has no damage attribute, otherwise ActionFlow._applyModifiableValue
+            // would add that attribute a second time at roll time (double-counted damage).
+            if (!damage.attribute) {
+                damage.base = chummerDamage.damage;
+                damage.type.base = chummerDamage.type;
+            }
             if (chummerDamage.dropoff || chummerDamage.radius) {
                 system.thrown = {
                     ...system.thrown,
