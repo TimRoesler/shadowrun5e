@@ -12907,6 +12907,23 @@ var SR5_ACTIVE_EFFECT_MODES = Object.freeze({
   UPGRADE: 4,
   OVERRIDE: 5
 });
+var SR5_LEGACY_MODE_BY_CHANGE_TYPE = Object.freeze({
+  custom: SR5_ACTIVE_EFFECT_MODES.CUSTOM,
+  multiply: SR5_ACTIVE_EFFECT_MODES.MULTIPLY,
+  add: SR5_ACTIVE_EFFECT_MODES.ADD,
+  downgrade: SR5_ACTIVE_EFFECT_MODES.DOWNGRADE,
+  upgrade: SR5_ACTIVE_EFFECT_MODES.UPGRADE,
+  override: SR5_ACTIVE_EFFECT_MODES.OVERRIDE
+});
+function resolveLegacyChangeMode(change) {
+  const changeType = typeof change.type === "string" ? change.type : "";
+  const mappedMode = SR5_LEGACY_MODE_BY_CHANGE_TYPE[changeType];
+  if (mappedMode !== void 0) return mappedMode;
+  if (typeof change.mode === "number") return change.mode;
+  console.error(`Shadowrun5e | Unrecognized change type "${change.type}", defaulting to "add" mode.`);
+  return SR5_ACTIVE_EFFECT_MODES.ADD;
+}
+__name(resolveLegacyChangeMode, "resolveLegacyChangeMode");
 var FLAGS = {
   KEY_DATA_VERSION: "systemMigrationVersion",
   ShowGlitchAnimation: "showGlitchAnimation",
@@ -13212,7 +13229,7 @@ var ModifiableField = class extends foundry.data.fields.SchemaField {
     if (isNaN(changeValue)) return void 0;
     const field = value;
     const effectName = change.effect.name;
-    const effectMode = change.mode;
+    const effectMode = resolveLegacyChangeMode(change);
     const effectPriority = change.priority ?? 10 * effectMode;
     field.changes.push(
       DataDefaults.createData("change_entry", {
@@ -27094,14 +27111,6 @@ var SR5ActiveEffect = class _SR5ActiveEffect extends ActiveEffect {
   static {
     __name(this, "SR5ActiveEffect");
   }
-  static legacyModeByChangeType = {
-    custom: SR5_ACTIVE_EFFECT_MODES.CUSTOM,
-    multiply: SR5_ACTIVE_EFFECT_MODES.MULTIPLY,
-    add: SR5_ACTIVE_EFFECT_MODES.ADD,
-    downgrade: SR5_ACTIVE_EFFECT_MODES.DOWNGRADE,
-    upgrade: SR5_ACTIVE_EFFECT_MODES.UPGRADE,
-    override: SR5_ACTIVE_EFFECT_MODES.OVERRIDE
-  };
   /**
    * Can be used to determine if the origin of the effect is a document owned by another document.
    *
@@ -27209,12 +27218,7 @@ var SR5ActiveEffect = class _SR5ActiveEffect extends ActiveEffect {
    * Convert a v14 string-based change type into the legacy numeric mode value.
    */
   static getLegacyChangeMode(change) {
-    if (typeof change.mode === "number") return change.mode;
-    const changeType = typeof change.type === "string" ? change.type : "";
-    const mappedMode = this.legacyModeByChangeType[changeType];
-    if (mappedMode !== void 0) return mappedMode;
-    console.error(`Shadowrun5e | Unrecognized change type "${change.type}", defaulting to "add" mode.`);
-    return SR5_ACTIVE_EFFECT_MODES.ADD;
+    return resolveLegacyChangeMode(change);
   }
   get isSuppressed() {
     if (!(this.parent instanceof SR5Item)) return false;
@@ -42192,6 +42196,44 @@ var MugshotImport = class {
   }
 };
 
+// src/module/apps/actorImport/itemImporter/ChummerNumberParser.ts
+function parseChummerDecimal(value) {
+  if (!value) return 0;
+  const parsed = Number(value.trim().replace(",", "."));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+__name(parseChummerDecimal, "parseChummerDecimal");
+function parseChummerNuyen(value) {
+  if (!value) return 0;
+  const parsed = Number(value.replace(/[.,\s]/g, ""));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+__name(parseChummerNuyen, "parseChummerNuyen");
+function calculateChummerGearOwnCost(item) {
+  const totalCost = parseChummerNuyen(item.cost);
+  const children2 = item.children?.gear;
+  const childItems = children2 == null ? [] : Array.isArray(children2) ? children2 : [children2];
+  const childCost = childItems.reduce((total, child) => total + parseChummerNuyen(child.cost), 0);
+  return Math.max(totalCost - childCost, 0);
+}
+__name(calculateChummerGearOwnCost, "calculateChummerGearOwnCost");
+function parseChummerCapacityTotal(value, rating) {
+  if (!value || value.startsWith("[")) return 0;
+  if (/^\d+$/.test(value.trim())) return Number(value);
+  const ratingMultiplier = /Rating\s*\*\s*(\d+)/i.exec(value);
+  if (ratingMultiplier) return rating * Number(ratingMultiplier[1]);
+  return 0;
+}
+__name(parseChummerCapacityTotal, "parseChummerCapacityTotal");
+function parseChummerCapacitySlots(value, rating) {
+  if (!value) return 0;
+  const inner = value.replace(/[\[\]]/g, "").trim();
+  if (inner === "*" || inner === "") return 0;
+  if (/^Rating$/i.test(inner)) return rating;
+  return Number(inner) || 0;
+}
+__name(parseChummerCapacitySlots, "parseChummerCapacitySlots");
+
 // src/module/apps/actorImport/itemImporter/Parser.ts
 var Parser = class _Parser {
   static {
@@ -42244,7 +42286,7 @@ var Parser = class _Parser {
     if (itemData.qty != null)
       technology.quantity = Number(itemData.qty) || 0;
     if (itemData.owncost != null)
-      technology.cost = Number(itemData.owncost.replace(/[^\d.-]/g, "")) || 0;
+      technology.cost = parseChummerNuyen(itemData.owncost);
     if (itemData.equipped != null)
       technology.equipped = itemData.equipped === "True";
     if (itemData.conditionmonitor != null)
@@ -42478,6 +42520,9 @@ var DeviceParser = class extends Parser {
   parseCategoryFlags(item, itemData) {
     return item.system.category;
   }
+  async getEmbeddedItems(itemData) {
+    return await new GearsParser().parseItems(itemData.children?.gear);
+  }
 };
 
 // src/module/apps/actorImport/itemImporter/matrixImport/ProgramParser.ts
@@ -42506,7 +42551,10 @@ var GearsParser = class {
     __name(this, "GearsParser");
   }
   async parseItems(itemsData) {
-    const allGears = ImportHelper.getArray(itemsData);
+    const allGears = ImportHelper.getArray(itemsData).map((gear) => ({
+      ...gear,
+      owncost: String(calculateChummerGearOwnCost(gear))
+    }));
     const devices = [];
     const sins = [];
     const ammos = [];
@@ -42551,7 +42599,7 @@ var LifestyleParser = class extends Parser {
     } else {
       system.type = "other";
     }
-    system.cost = Number(itemData.totalmonthlycost) || 0;
+    system.cost = parseChummerNuyen(itemData.totalmonthlycost);
     system.permanent = itemData.purchased === "True";
     if (item.name === Parser.DEFAULT_NAME)
       item.name ||= itemData.baselifestyle;
@@ -42773,8 +42821,8 @@ var WareModParser = class extends Parser {
     const system = item.system;
     system.type = "ware";
     system.technology.equipped = true;
-    system.essence = parseFloat(itemData.ess) || 0;
-    system.slots = parseInt(itemData.capacity.replace(/[[\]]/g, "")) || 0;
+    system.essence = parseChummerDecimal(itemData.ess);
+    system.slots = parseChummerCapacitySlots(itemData.capacity, system.technology.rating);
     if (this.wareType === "bioware") {
       system.technology.wireless = "none";
     }
@@ -42794,8 +42842,8 @@ var WareParser = class extends Parser {
   parseItem(item, itemData) {
     const system = item.system;
     system.technology.equipped = true;
-    system.essence = Number(itemData.ess) || 0;
-    system.capacity.total = Number(itemData.capacity) || 0;
+    system.essence = parseChummerDecimal(itemData.ess);
+    system.capacity.total = parseChummerCapacityTotal(itemData.capacity, system.technology.rating);
     system.grade = itemData.grade.toLowerCase();
     if (this.parseType === "bioware") {
       system.technology.wireless = "none";
@@ -42945,8 +42993,10 @@ var WeaponParser = class extends Parser {
     }
     {
       const chummerDamage = this.parseDamage(itemData.damage_noammo_english);
-      damage.base = chummerDamage.damage;
-      damage.type.base = chummerDamage.type;
+      if (!damage.attribute) {
+        damage.base = chummerDamage.damage;
+        damage.type.base = chummerDamage.type;
+      }
       if (chummerDamage.dropoff || chummerDamage.radius) {
         system.thrown = {
           ...system.thrown,
@@ -43205,6 +43255,43 @@ var VehicleParser = class {
   }
 };
 
+// src/module/apps/actorImport/characterImporter/ChummerNuyenCalculator.ts
+function asArray(value) {
+  if (value == null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+__name(asArray, "asArray");
+function calculateChummerNuyen(character) {
+  const exportedNuyen = parseChummerNuyen(character.nuyen);
+  if (character.created === "True") return exportedNuyen;
+  const purchases = [
+    ...asArray(character.armors?.armor),
+    ...asArray(character.weapons?.weapon),
+    ...asArray(character.cyberwares?.cyberware),
+    ...asArray(character.gears?.gear),
+    ...asArray(character.vehicles?.vehicle)
+  ];
+  const purchaseCost = purchases.reduce((total, item) => total + parseChummerNuyen(item.cost), 0);
+  const lifestyleCost = asArray(character.lifestyles?.lifestyle).reduce((total, lifestyle) => total + parseChummerNuyen(lifestyle.totalcost), 0);
+  return Math.max(exportedNuyen - purchaseCost - lifestyleCost, 0);
+}
+__name(calculateChummerNuyen, "calculateChummerNuyen");
+
+// src/module/apps/actorImport/characterImporter/ChummerKarmaCalculator.ts
+var STANDARD_CREATION_KARMA = 25;
+function asArray2(value) {
+  if (value == null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+__name(asArray2, "asArray");
+function calculateChummerKarma(character) {
+  const exportedKarma = Number(character.karma) || 0;
+  if (character.created === "True") return exportedKarma;
+  const qualityCost = asArray2(character.qualities?.quality).filter((quality) => quality.qualitysource === "Selected").reduce((total, quality) => total + (Number(quality.bp) || 0), 0);
+  return Math.max(STANDARD_CREATION_KARMA - qualityCost, 0);
+}
+__name(calculateChummerKarma, "calculateChummerKarma");
+
 // src/module/apps/actorImport/characterImporter/CharacterImporter.ts
 var CharacterImporter = class {
   static {
@@ -43288,9 +43375,9 @@ var CharacterImporter = class {
     system.street_cred = Number(chummerChar.calculatedstreetcred) || 0;
     system.notoriety = Number(chummerChar.calculatednotoriety) || 0;
     system.public_awareness = Number(chummerChar.calculatedpublicawareness) || 0;
-    system.karma.value = Number(chummerChar.karma) || 0;
+    system.karma.value = calculateChummerKarma(chummerChar);
     system.karma.max = Number(chummerChar.totalkarma) || 0;
-    system.nuyen = parseInt(chummerChar.nuyen.replace(/[,.]/g, ""));
+    system.nuyen = calculateChummerNuyen(chummerChar);
     if (chummerChar.technomancer === "True") {
       system.special = "resonance";
       const initiationGrades = ImportHelper.getArray(chummerChar.initiationgrade?.initiationgrade);
@@ -43349,7 +43436,7 @@ var CharacterImporter = class {
     }
   }
   static importInitiative(system, chummerChar) {
-    system.initiative.meatspace.dice.base = Number(chummerChar.initdice) || 1;
+    system.initiative.meatspace.dice.base = 1;
     system.initiative.astral.dice.base = Number(chummerChar.astralinitdice) || 2;
     system.initiative.matrix.dice.base = Number(chummerChar.matrixarinitdice) || 3;
     system.initiative.meatspace.constant.base = Number(chummerChar.initbonus) || 0;

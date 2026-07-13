@@ -20,6 +20,38 @@ export const SR5_ACTIVE_EFFECT_MODES = Object.freeze({
     UPGRADE: 4,
     OVERRIDE: 5,
 } as const);
+
+/**
+ * Map a FoundryVTT v14 string-based change type onto the legacy numeric mode value.
+ *
+ * Since Foundry v14 the numeric ActiveEffect change `mode` is deprecated in favor of the
+ * string `type` (deprecated in v14, removed in v16). Reading `change.mode` directly triggers
+ * a compatibility warning, so all system code should resolve the mode through this helper.
+ */
+export const SR5_LEGACY_MODE_BY_CHANGE_TYPE: Readonly<Record<string, number>> = Object.freeze({
+    custom: SR5_ACTIVE_EFFECT_MODES.CUSTOM,
+    multiply: SR5_ACTIVE_EFFECT_MODES.MULTIPLY,
+    add: SR5_ACTIVE_EFFECT_MODES.ADD,
+    downgrade: SR5_ACTIVE_EFFECT_MODES.DOWNGRADE,
+    upgrade: SR5_ACTIVE_EFFECT_MODES.UPGRADE,
+    override: SR5_ACTIVE_EFFECT_MODES.OVERRIDE,
+});
+
+/**
+ * Resolve the legacy numeric change mode from an ActiveEffect change without accessing the
+ * deprecated numeric `mode` property, preferring the v14 string `type`.
+ */
+export function resolveLegacyChangeMode(change: { mode?: number; type?: string | null }): number {
+    const changeType = typeof change.type === 'string' ? change.type : '';
+    const mappedMode = SR5_LEGACY_MODE_BY_CHANGE_TYPE[changeType];
+    if (mappedMode !== undefined) return mappedMode;
+
+    // Fall back to the deprecated numeric mode only when no string type is available.
+    if (typeof change.mode === 'number') return change.mode;
+
+    console.error(`Shadowrun5e | Unrecognized change type "${change.type}", defaulting to "add" mode.`);
+    return SR5_ACTIVE_EFFECT_MODES.ADD;
+}
 export const FLAGS = {
     KEY_DATA_VERSION: 'systemMigrationVersion',
     ShowGlitchAnimation: 'showGlitchAnimation',

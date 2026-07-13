@@ -4,6 +4,7 @@ import { AnyObject } from "fvtt-types/utils";
 import DataModel = foundry.abstract.DataModel;
 import SchemaField = foundry.data.fields.SchemaField;
 import { DataDefaults } from "@/module/data/DataDefaults";
+import { resolveLegacyChangeMode } from "@/module/constants";
 
 /**
  * A ModifiableSchemaField is a SchemaField that represents a ModifiableValue type, which 
@@ -36,7 +37,8 @@ export class ModifiableField<
 
         const field = value as ModifiableValueType;
         const effectName = change.effect.name;
-        const effectMode = change.mode;
+        // Resolve the mode via the v14 string `type` to avoid the deprecated numeric `change.mode`.
+        const effectMode = resolveLegacyChangeMode(change);
         const effectPriority = change.priority ?? 10 * effectMode;
 
         field.changes.push(
