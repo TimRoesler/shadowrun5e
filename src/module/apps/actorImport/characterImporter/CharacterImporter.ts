@@ -224,7 +224,12 @@ export class CharacterImporter {
 
     private static importInitiative(system: BlankCharacter['system'], chummerChar: ActorSchema) {
         // Chummer fields store final initiative constants/dice, so import directly into initiative config fields.
-        system.initiative.meatspace.dice.base = Number(chummerChar.initdice) || 1;
+        // Exception: meatspace initiative dice. The metatype base is always 1D6; extra dice from reflex
+        // augments (Wired Reflexes, Synaptic Booster, adept Improved Reflexes) are added by those items'
+        // active effects (system.initiative.meatspace.dice). Baking Chummer's already-augmented initdice
+        // here would double-count them (e.g. base 3 + booster 2 = 5D6 instead of 3D6). Mirror importAttributes,
+        // which imports the unaugmented base and lets effects apply on top.
+        system.initiative.meatspace.dice.base = 1;
         system.initiative.astral.dice.base = Number(chummerChar.astralinitdice) || 2;
         system.initiative.matrix.dice.base = Number(chummerChar.matrixarinitdice) || 3;
         system.initiative.meatspace.constant.base = Number(chummerChar.initbonus) || 0;
