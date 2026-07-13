@@ -1,0 +1,57 @@
+@use "variables";
+
+@mixin basic-rollable {
+    &:hover {
+        @include linkHovered;
+    }
+}
+@mixin rollable {
+    &:hover {
+        @include linkHovered;
+        cursor: pointer;
+    }
+}
+
+@mixin clickable {
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+@mixin systemFonts {
+    font-family: variables.$systemFonts;
+}
+
+@mixin title {
+    font-family: variables.$systemFonts;
+    color: variables.$color;
+    @include textOutline;
+}
+
+@mixin textOutline {
+    color: variables.$color;
+    text-shadow: -1px -1px 0 variables.$outline-color, 1px -1px 0 variables.$outline-color, -1px 1px 0 variables.$outline-color,
+        1px 1px 0 variables.$outline-color;
+}
+
+@mixin shortUnder {
+    position: relative;
+    &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 50%;
+        transform: translateX(50%);
+        border-bottom: variables.$border-under;
+    }
+}
+
+@mixin sheet {
+    background: linear-gradient(rgba(0, 0, 0, 0.60), rgba(0, 0, 0, 0.60)), url("assets/page.webp") repeat;
+    color: variables.$color;
+}
+
+@mixin linkHovered {
+    text-shadow: 0 0 8px var(--color-shadow-primary);
+    color: variables.$fLightRed;
+}

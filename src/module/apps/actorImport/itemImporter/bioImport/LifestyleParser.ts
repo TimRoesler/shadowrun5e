@@ -1,0 +1,27 @@
+import { SR5 } from "../../../../config";
+import { BlankItem, ExtractItemType, Parser } from "../Parser";
+import { parseChummerNuyen } from "../ChummerNumberParser";
+
+export class LifestyleParser extends Parser<'lifestyle'> {
+    protected readonly parseType = 'lifestyle';
+
+    protected parseItem(item: BlankItem<'lifestyle'>, itemData: ExtractItemType<'lifestyles', 'lifestyle'>) {
+        const system = item.system;
+
+        // Advanced lifestyles and lifestyle qualities are not supported at the moment
+        // Map the chummer lifestyle type to our sr5 foundry type.
+        const chummerLifestyleType = itemData.baselifestyle.toLowerCase();
+        if (SR5.lifestyleTypes[chummerLifestyleType]) {
+            system.type = chummerLifestyleType as any;
+        } else {
+            system.type = 'other';
+        }
+
+        system.cost = parseChummerNuyen(itemData.totalmonthlycost);
+        system.permanent = itemData.purchased === 'True';
+
+        // The name of the lifestyle is optional, so we use a fallback here.
+        if (item.name === Parser.DEFAULT_NAME)
+            item.name ||= itemData.baselifestyle;
+    }
+}
