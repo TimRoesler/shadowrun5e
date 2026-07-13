@@ -352,7 +352,9 @@ export class Migrator {
 
                         // Foundry uses the parent token ID as the ActorDelta ID.
                         // Provide it upfront to avoid ActorDeltaField._updateDiff assigning _id to the cleaned update value.
-                        if (!token.actorLink && data.delta && !data.delta._id)
+                        // Applies to linked tokens too: they also carry a delta whose _id must equal the token id,
+                        // otherwise the update proxy throws "'set' on proxy: trap returned falsish for property '_id'".
+                        if (data.delta && !data.delta._id)
                             data.delta._id = token.id;
 
                         return data;
