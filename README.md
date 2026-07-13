@@ -1,60 +1,52 @@
-# Shadowrun 5e für Foundry VTT
+# Shadowrun 5th Edition
 
-Dieses Repository stellt das Spielsystem **Shadowrun 5. Edition** für
-**Foundry Virtual Tabletop V14** bereit.
+Spielsystem für *Shadowrun, Fifth Edition* in Foundry VTT v14 — persönlicher Fork mit
+Anpassungen und Fehlerkorrekturen für den Eigenbetrieb.
 
-## Installation in Foundry VTT
+## Funktionen
 
-Kopiere diese URL:
+- Charaktere, Fahrzeuge, Geister, Sprites und IC
+- Ausrüstung, Waffen, Rüstung, Cyberware und Bioware
+- Kampf- und Initiativesystem mit Schadensabwicklung
+- Magie, Zauber und Beschwörung; Matrix und Technomancer; Rigging
+- Chummer-Charakterimport
+- Deutsch- und englischsprachige Oberfläche
+
+## Installation
+
+Manifest-URL in Foundry unter *Spielsysteme → System installieren* eintragen:
 
 ```text
 https://github.com/TimRoesler/shadowrun5e/releases/latest/download/system.json
 ```
 
-Füge sie anschließend in Foundry VTT ein:
-
-1. Foundry VTT starten.
-2. **Spielsysteme** öffnen.
-3. **System installieren** auswählen.
-4. Die URL in das Feld **Manifest-URL** einfügen.
-5. Auf **Installieren** klicken.
-
-Updates können danach direkt über die Foundry-Paketverwaltung installiert werden.
+Voraussetzungen: keine (eigenständiges Spielsystem).
 
 ## Kompatibilität
 
-- Systemversion: **0.36.1.1**
-- Foundry VTT: **Version 14**
-- Verifiziert mit: **Foundry VTT 14.364**
+| Komponente | Anforderung |
+|---|---|
+| Foundry VTT | v14 (verifiziert: 14.364) |
+| Systemversion | 0.36.x |
 
-## Funktionsumfang
+## Entwicklung
 
-- Charaktere, Fahrzeuge, Geister, Sprites und IC
-- Ausrüstung, Waffen, Rüstung, Cyberware und Bioware
-- Kampf- und Initiativesystem
-- Matrix und Technomancer
-- Magie, Zauber und Beschwörung
-- Rigging und Fahrzeuge
-- Chummer-Import
-- deutsch- und englischsprachige Oberfläche
+```bash
+npm ci             # Abhängigkeiten
+npm test           # Typecheck (tsgo --noEmit)
+npm run build:prod # Produktions-Build nach dist/
+```
 
-## Releases und Fehlerberichte
+Ausführliche Entwickler-Dokumentation: siehe [README-DEV.md](README-DEV.md).
 
-- [Aktuelle Version](https://github.com/TimRoesler/shadowrun5e/releases/latest)
-- [Fehler melden](https://github.com/TimRoesler/shadowrun5e/issues)
+## Herkunft & Credits
 
-## Herkunft
+Fork von [SR5-FoundryVTT/foundryvtt-shadowrun5e](https://github.com/SR5-FoundryVTT/SR5-FoundryVTT).
+Originalautoren: Jan Schoska, Shawn Milligan, Bruno Melo und Timothy J. Lanza sowie die
+SR5-FoundryVTT-Community.
 
-Diese angepasste V14-Version basiert auf dem freien
-[SR5-FoundryVTT-Projekt](https://github.com/SR5-FoundryVTT/SR5-FoundryVTT).
-Die Namen der ursprünglichen Autoren sowie alle Lizenz- und Urheberhinweise bleiben
-erhalten.
+## Lizenz & Markenhinweis
 
-## Lizenz und Markenhinweis
-
-Der Programmcode steht gemäß der Datei [LICENSE](LICENSE) unter der GNU General
-Public License Version 3.
-
-**Shadowrun** ist eine eingetragene Marke von The Topps Company, Inc. Dieses Projekt
-ist ein nichtkommerzielles Fanprojekt und steht in keiner Verbindung zu The Topps
-Company, Inc. oder Catalyst Game Labs.
+GNU General Public License v3, siehe [LICENSE](LICENSE). **Shadowrun** ist eine eingetragene
+Marke von The Topps Company, Inc. Dieses nichtkommerzielle Fanprojekt steht in keiner
+Verbindung zu The Topps Company, Inc. oder Catalyst Game Labs.
