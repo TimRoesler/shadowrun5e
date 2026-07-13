@@ -343,28 +343,19 @@ export class Migrator {
             await this.updateDocuments(Combatant, combat.toObject().combatants ?? [], combat);
 
         /* Tokens */
-        for (const scene of game.scenes) {
+        // Token ActorDeltas are intentionally NOT written back here.
+        //
+        // Foundry v14's ActorDeltaField._updateDiff force-assigns `_id` onto an immutable source
+        // proxy (core throws "'set' on proxy: trap returned falsish for property '_id'"). This
+        // cannot be avoided from system code: pre-seeding the delta `_id` does not survive, as core
+        // strips it before that assignment, and there is no update option that skips the code path.
+        //
+        // Persisting the delta is unnecessary anyway: linked-token delta updates are discarded by
+        // core, and synthetic (token) actors are re-migrated in-memory via SR5Actor.migrateData on
+        // every load, so runtime data stays correct. The progress bar is still advanced per scene
+        // to keep the completion count consistent with totalMigrations.
+        for (const _scene of game.scenes) {
             this.updateProgressbar();
-            try {
-                await TokenDocument.implementation.updateDocuments(
-                    scene.tokens.map(token => {
-                        const data = token.toObject();
-
-                        // Foundry uses the parent token ID as the ActorDelta ID.
-                        // Provide it upfront to avoid ActorDeltaField._updateDiff assigning _id to the cleaned update value.
-                        // Applies to linked tokens too: they also carry a delta whose _id must equal the token id,
-                        // otherwise the update proxy throws "'set' on proxy: trap returned falsish for property '_id'".
-                        if (data.delta && !data.delta._id)
-                            data.delta._id = token.id;
-
-                        return data;
-                    }),
-                    // Save migrated data silently (no hooks/renders) to avoid intermediate state issues.
-                    { parent: scene, diff: false, recursive: false, noHook: true, render: false }
-                );
-            } catch (error) {
-                console.error(`Failed migration update for Token documents in ${scene.uuid}.`, error);
-            }
         }
 
         /* Finalize Migration */
