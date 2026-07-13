@@ -19,7 +19,7 @@ jobs:
             - name: Modify System Manifest With Release-Specific Values
               env:
                   URL: https://github.com/${{github.repository}}
-                  MANIFEST: https://github.com/${{github.repository}}/releases/latest/download/system.json
+                  MANIFEST: https://raw.githubusercontent.com/${{github.repository}}/main/system.json
                   DOWNLOAD: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/shadowrun5e.zip
                   VERSION: ${{github.event.release.tag_name}}
               run: |
