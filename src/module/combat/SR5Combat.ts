@@ -73,7 +73,7 @@ export class SR5Combat extends Combat<"base"> {
         for (const { value, keySuffix, icon } of mapping) {
             options.push({
                 icon,
-                name: game.i18n.localize(`SR5.COMBAT.ReduceInitBy${keySuffix}`),
+                label: game.i18n.localize(`SR5.COMBAT.ReduceInitBy${keySuffix}`),
                 callback: async (li: JQuery) => {
                     const combatant = game.combat?.combatants.get(li.data("combatant-id") as string);
                     await combatant?.adjustInitiative(-value);
