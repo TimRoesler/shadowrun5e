@@ -1761,13 +1761,16 @@ export class SuccessTest<T extends SuccessTestData = SuccessTestData> {
 
         // Prepare message content.
         const templateData = await this._prepareMessageTemplateData();
-        const content = await renderTemplate(this._chatMessageTemplate, templateData);
+        const content = await foundry.applications.handlebars.renderTemplate(this._chatMessageTemplate, templateData);
         // Prepare the actual message.
         const messageData = await this._prepareMessageData(content);
-        const options = { rollMode: this._rollMode };
+        // v14: Die rollMode-Create-Option ist deprecated (→ messageMode). Den
+        // testspezifischen Modus stattdessen direkt auf die Nachrichtendaten
+        // anwenden (wie in _prepareMessageData) und ohne Option erstellen.
+        // @ts-expect-error - TODO: fvtt - v14 - missing settings typing
+        ChatMessage.applyMode(messageData, this._rollMode);
 
-        //@ts-expect-error // TODO: foundry-vtt-types v10
-        const message = await ChatMessage.create(messageData, options);
+        const message = await ChatMessage.create(messageData);
 
         if (!message) return;
 

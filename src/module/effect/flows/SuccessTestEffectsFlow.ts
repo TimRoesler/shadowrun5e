@@ -200,7 +200,7 @@ export class SuccessTestEffectsFlow<T extends SuccessTest> {
                 token
             }
         };
-        const content = await renderTemplate('systems/shadowrun5e/dist/templates/chat/test-effects-message.hbs', templateData);
+        const content = await foundry.applications.handlebars.renderTemplate('systems/shadowrun5e/dist/templates/chat/test-effects-message.hbs', templateData);
         const messageData = {
             content
         };
