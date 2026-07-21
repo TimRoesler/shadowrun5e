@@ -68,10 +68,12 @@ export class SR5CombatTracker extends CombatTracker {
     protected override _getEntryContextOptions() {
         const options = super._getEntryContextOptions();
 
+        // fvtt-types (13.346) still types ContextMenu entries with the pre-v14 name/condition
+        // fields; this entry uses the v14 label/visible names, so cast at the boundary.
         options.splice(1, 0, {
-            name: game.i18n.localize('SR5.COMBAT.SeizeInitiative'),
+            label: game.i18n.localize('SR5.COMBAT.SeizeInitiative'),
             icon: '<i class="fa-solid fa-angles-up"></i>',
-            condition: li => {
+            visible: li => {
                 const combatant = this._getCombatant(li);
                 if (!combatant) return false;
 
@@ -82,7 +84,7 @@ export class SR5CombatTracker extends CombatTracker {
             callback: li => {
                 void this._onSeizeInitiative(li);
             }
-        });
+        } as any);
 
         return options;
     }

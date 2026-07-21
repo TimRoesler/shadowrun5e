@@ -2191,23 +2191,23 @@ export class SuccessTest<T extends SuccessTestData = SuccessTestData> {
         const deleteOption = options.pop();
 
         options.push({
-            name: game.i18n.localize('SR5.PushTheLimit'),
+            label: game.i18n.localize('SR5.PushTheLimit'),
             callback: pushTheLimit,
-            condition: true,
+            visible: true,
             icon: '<i class="fas fa-meteor"></i>'
         })
 
         options.push({
-            name: game.i18n.localize('SR5.SecondChance'),
+            label: game.i18n.localize('SR5.SecondChance'),
             callback: secondChance,
-            condition: true,
+            visible: true,
             icon: '<i class="fas fa-meteor"></i>'
         });
 
         options.push({
-            name: game.i18n.localize('SR5.Extend'),
+            label: game.i18n.localize('SR5.Extend'),
             callback: extendTest,
-            condition: true,
+            visible: true,
             icon: '<i class="fas fa-clock"></i>'
         })
 

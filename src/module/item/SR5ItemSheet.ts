@@ -1019,12 +1019,14 @@ export class SR5ItemSheet<T extends SR5BaseItemSheetData = SR5ItemSheetData> ext
     override async _onFirstRender(context, options) {
         await super._onFirstRender(context, options);
 
-        this._createContextMenu(this._getNestedItemContextOptions.bind(this), "[data-item-id]", {
+        // fvtt-types (13.346) still types ContextMenu entries with the pre-v14 name/condition
+        // fields; our handlers use the v14 label/visible names, so cast at the boundary.
+        this._createContextMenu(this._getNestedItemContextOptions.bind(this) as any, "[data-item-id]", {
             hookName: "getNestedItemContextOptions",
             jQuery: false,
             fixed: true,
         });
-        this._createContextMenu(this._getEffectContextOptions.bind(this), "[data-effect-id]", {
+        this._createContextMenu(this._getEffectContextOptions.bind(this) as any, "[data-effect-id]", {
             hookName: "getEffectContextOptions",
             jQuery: false,
             fixed: true,
@@ -1035,7 +1037,7 @@ export class SR5ItemSheet<T extends SR5BaseItemSheetData = SR5ItemSheetData> ext
         return [
             SheetFlow._getSourceContextOption(),
             {
-                name: "SR5.ContextOptions.EditItem",
+                label: "SR5.ContextOptions.EditItem",
                 icon: "<i class='fas fa-pen-to-square'></i>",
                 callback: async (target: HTMLElement) => {
                     const id = SheetFlow.closestItemId(target);
@@ -1046,7 +1048,7 @@ export class SR5ItemSheet<T extends SR5BaseItemSheetData = SR5ItemSheetData> ext
                 }
             },
             {
-                name: "SR5.ContextOptions.DeleteItem",
+                label: "SR5.ContextOptions.DeleteItem",
                 icon: "<i class='fas fa-trash'></i>",
                 callback: async (target: HTMLElement) => {
                     const userConsented = await Helpers.confirmDeletion();
@@ -1065,7 +1067,7 @@ export class SR5ItemSheet<T extends SR5BaseItemSheetData = SR5ItemSheetData> ext
         return [
             SheetFlow._getSourceContextOption(),
             {
-                name: "SR5.ContextOptions.EditEffect",
+                label: "SR5.ContextOptions.EditEffect",
                 icon: "<i class='fas fa-pen-to-square'></i>",
                 callback: async (target: HTMLElement) => {
                     const id = SheetFlow.closestEffectId(target);
@@ -1082,9 +1084,9 @@ export class SR5ItemSheet<T extends SR5BaseItemSheetData = SR5ItemSheetData> ext
                 }
             },
             {
-                name: "SR5.ContextOptions.DeleteEffect",
+                label: "SR5.ContextOptions.DeleteEffect",
                 icon: "<i class='fas fa-trash'></i>",
-                condition: (target: HTMLElement) => {
+                visible: (target: HTMLElement) => {
                     const id = SheetFlow.closestEffectId(target);
                     const item = this.item.effects.get(id);
                     return item !== undefined;
