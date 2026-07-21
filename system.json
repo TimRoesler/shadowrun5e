@@ -20,8 +20,8 @@
             "discord": "T.J."
         }
     ],
-    "url": "#{URL}#",
-    "version": "0.36.0",
+    "url": "https://github.com/TimRoesler/shadowrun5e",
+    "version": "0.36.2.1",
     "compatibility": {
         "minimum": "14.363",
         "verified": "14.365",
@@ -268,8 +268,8 @@
         }
     ],
     "socket": true,
-    "manifest": "#{MANIFEST}#",
-    "download": "#{DOWNLOAD}#",
+    "manifest": "https://raw.githubusercontent.com/TimRoesler/shadowrun5e/main/system.json",
+    "download": "https://github.com/TimRoesler/shadowrun5e/releases/latest/download/shadowrun5e.zip",
     "protected": false,
     "initiative": "@initiative.current.base.value + @initiative.current.dice.text - @wounds.value",
     "grid": {

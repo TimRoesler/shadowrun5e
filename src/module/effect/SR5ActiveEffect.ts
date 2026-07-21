@@ -6,6 +6,7 @@ import { LinksHelpers } from '@/module/utils/links';
 import { DataDefaults } from "../data/DataDefaults";
 import { ModifiableValueType } from "../types/template/Base";
 import { ModifiableValue } from "../mods/ModifiableValue";
+import { resolveLegacyChangeMode } from "../constants";
 import DataModel = foundry.abstract.DataModel;
 
 /**
@@ -24,15 +25,6 @@ import DataModel = foundry.abstract.DataModel;
  * application.
  */
 export class SR5ActiveEffect extends ActiveEffect {
-    private static readonly legacyModeByChangeType: Record<string, number> = {
-        custom: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-        multiply: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
-        add: CONST.ACTIVE_EFFECT_MODES.ADD,
-        downgrade: CONST.ACTIVE_EFFECT_MODES.DOWNGRADE,
-        upgrade: CONST.ACTIVE_EFFECT_MODES.UPGRADE,
-        override: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-    };
-
     /**
      * Can be used to determine if the origin of the effect is a document owned by another document.
      *
@@ -163,14 +155,7 @@ export class SR5ActiveEffect extends ActiveEffect {
      * Convert a v14 string-based change type into the legacy numeric mode value.
      */
     static getLegacyChangeMode(change: { mode?: number; type?: string | null }): number {
-        if (typeof change.mode === 'number') return change.mode;
-
-        const changeType = typeof change.type === 'string' ? change.type : '';
-        const mappedMode = this.legacyModeByChangeType[changeType];
-        if (mappedMode !== undefined) return mappedMode;
-
-        console.error(`Shadowrun5e | Unrecognized change type "${change.type}", defaulting to "add" mode.`);
-        return CONST.ACTIVE_EFFECT_MODES.ADD;
+        return resolveLegacyChangeMode(change);
     }
 
     override get isSuppressed(): boolean {

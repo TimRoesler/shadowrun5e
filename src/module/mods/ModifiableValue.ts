@@ -1,9 +1,10 @@
 import { DataDefaults } from "../data/DataDefaults";
 import { ChangeEntryType, ModifiableValueType } from "../types/template/Base";
+import { SR5_ACTIVE_EFFECT_MODES } from "../constants";
 
 // Allows for managing a list of named changes with numeric values, including calculating totals based on change modes and priorities.
 export type ChangeOptionsType = Partial<Omit<ChangeEntryType, 'name' | 'value' | 'mode'>>
-        & { mode?: ChangeEntryType['mode'] | keyof typeof CONST.ACTIVE_EFFECT_MODES; };
+        & { mode?: ChangeEntryType['mode'] | keyof typeof SR5_ACTIVE_EFFECT_MODES; };
 
 /**
  * A class for managing a list of named parts with generic values.
@@ -54,7 +55,7 @@ export class ModifiableValue<Field extends ModifiableValueType = ModifiableValue
     ): ModifiableValueType['changes'][number] {
         const createData = { name, value, ...options };
         if (typeof createData.mode === 'string')
-            createData.mode = CONST.ACTIVE_EFFECT_MODES[createData.mode] ?? CONST.ACTIVE_EFFECT_MODES.ADD;
+            createData.mode = SR5_ACTIVE_EFFECT_MODES[createData.mode] ?? SR5_ACTIVE_EFFECT_MODES.ADD;
 
         if (createData.priority === undefined)
             createData.priority = createData.mode != null ? 10 * createData.mode : undefined;
@@ -180,18 +181,18 @@ export class ModifiableValue<Field extends ModifiableValueType = ModifiableValue
             if (!change.enabled) continue;
 
             switch (change.mode) {
-                case CONST.ACTIVE_EFFECT_MODES.ADD:
-                case CONST.ACTIVE_EFFECT_MODES.CUSTOM:
+                case SR5_ACTIVE_EFFECT_MODES.ADD:
+                case SR5_ACTIVE_EFFECT_MODES.CUSTOM:
                     this._field.value += change.value;
                     break;
-                case CONST.ACTIVE_EFFECT_MODES.MULTIPLY:
+                case SR5_ACTIVE_EFFECT_MODES.MULTIPLY:
                     this._field.value *= change.value;
                     break;
-                case CONST.ACTIVE_EFFECT_MODES.OVERRIDE:
+                case SR5_ACTIVE_EFFECT_MODES.OVERRIDE:
                     this._field.value = change.value;
                     this._markPreviousChangesMasked(i);
                     break;
-                case CONST.ACTIVE_EFFECT_MODES.UPGRADE:
+                case SR5_ACTIVE_EFFECT_MODES.UPGRADE:
                     if (this._field.value < change.value) {
                         this._field.value = change.value;
                         this._markPreviousChangesMasked(i);
@@ -199,7 +200,7 @@ export class ModifiableValue<Field extends ModifiableValueType = ModifiableValue
                         change.invalidated = true;
                     }
                     break;
-                case CONST.ACTIVE_EFFECT_MODES.DOWNGRADE:
+                case SR5_ACTIVE_EFFECT_MODES.DOWNGRADE:
                     if (this._field.value > change.value) {
                         this._field.value = change.value;
                         this._markPreviousChangesMasked(i);

@@ -1,4 +1,5 @@
 import { BonusSchema } from '../schema/BonusSchema';
+import { SR5_ACTIVE_EFFECT_MODES } from '@/module/constants';
 
 export type DocCreateData = (
     Actor.CreateData | Item.CreateData
@@ -6,8 +7,8 @@ export type DocCreateData = (
 
 export type AECreateData = Omit<ActiveEffect.CreateData, "name"> & { name?: string, changes?: any[] };
 
-export type ActiveEffectMode = typeof CONST.ACTIVE_EFFECT_MODES[keyof typeof CONST.ACTIVE_EFFECT_MODES];
-export const { MULTIPLY, ADD, DOWNGRADE, UPGRADE, OVERRIDE } = CONST.ACTIVE_EFFECT_MODES;
+export type ActiveEffectMode = typeof SR5_ACTIVE_EFFECT_MODES[keyof typeof SR5_ACTIVE_EFFECT_MODES];
+export const { MULTIPLY, ADD, DOWNGRADE, UPGRADE, OVERRIDE } = SR5_ACTIVE_EFFECT_MODES;
 export type EffectChangeParameter = { key: string; value: string | number; mode?: number; priority?: ActiveEffectMode; };
 
 export class BonusConstant {

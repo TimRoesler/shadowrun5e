@@ -12,6 +12,50 @@
  */
 export const SYSTEM_NAME = 'shadowrun5e' as const;
 export const SYSTEM_SOCKET = `system.${SYSTEM_NAME}` as const;
+
+/**
+ * Numeric ActiveEffect change modes mirrored as plain literals.
+ *
+ * Since Foundry v14 the numeric `CONST.ACTIVE_EFFECT_MODES` enum is deprecated in favor of the
+ * string change `type` (deprecated in v14, removed in v16). Merely reading `CONST.ACTIVE_EFFECT_MODES`
+ * triggers a compatibility warning, so system code should reference these literals instead.
+ */
+export const SR5_ACTIVE_EFFECT_MODES = Object.freeze({
+    CUSTOM: 0,
+    MULTIPLY: 1,
+    ADD: 2,
+    DOWNGRADE: 3,
+    UPGRADE: 4,
+    OVERRIDE: 5,
+} as const);
+
+/**
+ * Map a FoundryVTT v14 string-based change type onto the legacy numeric mode value.
+ */
+export const SR5_LEGACY_MODE_BY_CHANGE_TYPE: Readonly<Record<string, number>> = Object.freeze({
+    custom: SR5_ACTIVE_EFFECT_MODES.CUSTOM,
+    multiply: SR5_ACTIVE_EFFECT_MODES.MULTIPLY,
+    add: SR5_ACTIVE_EFFECT_MODES.ADD,
+    downgrade: SR5_ACTIVE_EFFECT_MODES.DOWNGRADE,
+    upgrade: SR5_ACTIVE_EFFECT_MODES.UPGRADE,
+    override: SR5_ACTIVE_EFFECT_MODES.OVERRIDE,
+});
+
+/**
+ * Resolve the legacy numeric change mode from an ActiveEffect change without accessing the
+ * deprecated numeric `mode` property, preferring the v14 string `type`.
+ */
+export function resolveLegacyChangeMode(change: { mode?: number; type?: string | null }): number {
+    const changeType = typeof change.type === 'string' ? change.type : '';
+    const mappedMode = SR5_LEGACY_MODE_BY_CHANGE_TYPE[changeType];
+    if (mappedMode !== undefined) return mappedMode;
+
+    // Fall back to the deprecated numeric mode only when no string type is available.
+    if (typeof change.mode === 'number') return change.mode;
+
+    console.error(`Shadowrun5e | Unrecognized change type "${change.type}", defaulting to "add" mode.`);
+    return SR5_ACTIVE_EFFECT_MODES.ADD;
+}
 export const FLAGS = {
     KEY_DATA_VERSION: 'systemMigrationVersion',
     ShowGlitchAnimation: 'showGlitchAnimation',
@@ -271,7 +315,7 @@ export const SRStatus = [
         img: 'systems/shadowrun5e/dist/icons/status-effects/run.svg',
         system: { applyTo: 'test_all' },
         changes: [
-            {key: "data.pool", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-2"},
+            {key: "data.pool", mode: SR5_ACTIVE_EFFECT_MODES.ADD as CONST.ACTIVE_EFFECT_MODES, value: "-2"},
         ],
     },
     {
@@ -280,7 +324,7 @@ export const SRStatus = [
         img: 'systems/shadowrun5e/dist/icons/status-effects/sprint.svg',
         system: { applyTo: 'test_all' },
         changes: [
-            {key: "data.pool", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-4"},
+            {key: "data.pool", mode: SR5_ACTIVE_EFFECT_MODES.ADD as CONST.ACTIVE_EFFECT_MODES, value: "-4"},
         ],
     },
 ] as const satisfies CONFIG.StatusEffect[];

@@ -1,5 +1,6 @@
 import { VersionMigration } from "../VersionMigration";
 import { SR5 } from '@/module/config';
+import { SR5_ACTIVE_EFFECT_MODES } from '@/module/constants';
 
 type TempField = {
     label: string;
@@ -89,7 +90,7 @@ export class Version0_31_0 extends VersionMigration {
                     name: tempField.label,
                     changes: [{
                         key: tempField.path,
-                        mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+                        mode: SR5_ACTIVE_EFFECT_MODES.CUSTOM,
                         priority: 0,
                         value: String(tempField.value),
                     }],

@@ -1,4 +1,5 @@
 import { SR5 } from '@/module/config';
+import { SR5_ACTIVE_EFFECT_MODES } from '@/module/constants';
 
 const { ArrayField, BooleanField, NumberField, SchemaField, StringField } = foundry.data.fields;
 
@@ -31,12 +32,12 @@ export const ValueMaxPair = () => ({
 /**
  * Expansion of Foundry's ActiveEffect.ChangeData.
  * The 'key' is implied by the field this is attached to, while 'mode'
- * and 'priority' follow standard CONST.ACTIVE_EFFECT_MODES behavior.
+ * and 'priority' preserve the system's legacy numeric calculation order.
  */
 export const ChangeEntry = () => ({
     // Default values for the change entry on Active Effects.
     name: new StringField({ required: true }),
-    mode: new NumberField({ required: true, nullable: false, integer: true, initial: CONST.ACTIVE_EFFECT_MODES.ADD }),
+    mode: new NumberField({ required: true, nullable: false, integer: true, initial: SR5_ACTIVE_EFFECT_MODES.ADD }),
     value: new NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
     priority: new NumberField({ required: true, nullable: false, integer: true, initial: 20 /* Standard priority for ADD */ }),
 

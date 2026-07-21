@@ -1,5 +1,5 @@
 import { SR5 } from '@/module/config';
-import { SYSTEM_NAME } from '@/module/constants';
+import { SR5_ACTIVE_EFFECT_MODES, SYSTEM_NAME } from '@/module/constants';
 import { VersionMigration } from "../VersionMigration";
 import { DataDefaults } from '@/module/data/DataDefaults';
 const { getProperty } = foundry.utils;
@@ -60,18 +60,29 @@ const LEGACY_KNOWLEDGE_ATTRIBUTES: Record<LegacyKnowledgeType, string> = {
 export class Version0_33_0 extends VersionMigration {
     readonly TargetVersion = "0.33.0";
 
+    /**
+     * Read the legacy numeric mode of an effect change without triggering the v14 compatibility
+     * warning. Foundry v14 replaces migrated modes with a deprecation getter, so only a real
+     * own data property still carries unmigrated legacy data.
+     */
+    private static readLegacyChangeMode(change: any): number | undefined {
+        const descriptor = Object.getOwnPropertyDescriptor(change, 'mode');
+        if (!descriptor || descriptor.get) return undefined;
+        return change.mode;
+    }
+
     override handlesActiveEffect(_effect: Readonly<any>) {
         // effect change modes are either legacy mode or v14+ style type already migrated by Foundry
         const changes = getProperty(_effect, "system.changes");
         if (!Array.isArray(changes) || changes.length === 0) return false;
-        return changes.filter(change => change.mode === CONST.ACTIVE_EFFECT_MODES.CUSTOM).length > 0 || 
-               changes.filter(change => change.type === 'custom').length > 0;
+        return changes.some(change => change.type === 'custom' ||
+            Version0_33_0.readLegacyChangeMode(change) === SR5_ACTIVE_EFFECT_MODES.CUSTOM);
     }
 
     override migrateActiveEffect(effect: any) {
         for (const change of effect.system.changes) {
-            if (change.mode === CONST.ACTIVE_EFFECT_MODES.CUSTOM)
-                change.mode = CONST.ACTIVE_EFFECT_MODES.ADD;
+            if (Version0_33_0.readLegacyChangeMode(change) === SR5_ACTIVE_EFFECT_MODES.CUSTOM)
+                change.mode = SR5_ACTIVE_EFFECT_MODES.ADD;
 
             if (change.type === 'custom')
                 change.type = 'add';
